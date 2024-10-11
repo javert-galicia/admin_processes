@@ -1,4 +1,4 @@
-import 'package:admin_processes/process_object.dart';
+import 'package:admin_processes/model/process_object.dart';
 
 const processList = [
   ProcessObject('Uno', ['sdsdsd','sdasdasdasda']),
