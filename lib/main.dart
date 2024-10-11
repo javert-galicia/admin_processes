@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:admin_processes/model/process_list.dart';
+import 'package:admin_processes/data/process_list.dart';
 
 void main() => runApp(const CheckboxListTileApp());
 
