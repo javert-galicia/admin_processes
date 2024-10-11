@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:admin_processes/process_screen.dart';
+import 'package:admin_processes/process_items.dart';
 
 void main() => runApp(const AdminProcessApp());
 
@@ -12,7 +12,7 @@ class AdminProcessApp extends StatelessWidget {
       theme: ThemeData(useMaterial3: true),
       home: Scaffold(
         appBar: AppBar(title: const Text('Admin Processes')),
-        body: const ProcessScreen(),
+        body: const ProcessItems(),
       ),
     );
   }
