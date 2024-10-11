@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:admin_processes/model/process_list.dart';
 
 void main() => runApp(const CheckboxListTileApp());
 
@@ -27,6 +28,8 @@ class _CheckboxListTileExampleState extends State<CheckboxListTileExample> {
   bool checkboxValue2 = true;
   bool checkboxValue3 = true;
 
+  final currentProcess = processList[0];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,11 +43,11 @@ class _CheckboxListTileExampleState extends State<CheckboxListTileExample> {
                 checkboxValue1 = value!;
               });
             },
-            title: const ExpansionTile(
+            title: ExpansionTile(
               controlAffinity: ListTileControlAffinity.leading,
-              title: Text('Header'),
+              title: Text(currentProcess.title),
               children: [
-                Text('sdsadjsad'),
+                 Text(currentProcess.stages[1]),
               ],
             ),
             //subtitle: const Text('Supporting text'),
