@@ -1,8 +1,7 @@
-import 'package:admin_processes/model/process_object.dart';
+import 'package:admin_processes/model/process_study.dart';
 
 const processList = [
-  ProcessObject(
-      'Uno', ['sdsdsd', 'sdasdasdasda'], ['dfsdfsdf', 'sdffdfdfdfds']),
-  ProcessObject(
-      'Dos', ['eqweqweq', 'qweweqeqqeqw'], ['wqeeqweqweqwe', 'wqeqwewqeqwe']),
+  ProcessStudy('Uno', ['Dos', 'Prueba'], ['Tres', 'rttrtrtertertert']),
+  ProcessStudy(
+      'Dos', ['Cuatro', 'qweweqeqqeqw'], ['Cinco', 'wqeqwewqeqwe']),
 ];

@@ -13,7 +13,9 @@ class _ProcessScreenState extends State<ProcessScreen> {
   bool checkboxValue2 = true;
   bool checkboxValue3 = true;
 
-  final currentProcess = processList[0];
+  //final currentProcess = processList[1];
+  List<String> currentListSteps = processList[1].stages;
+  List<String> currentListDescr = processList[1].description;
 
   @override
   Widget build(BuildContext context) {
@@ -28,9 +30,9 @@ class _ProcessScreenState extends State<ProcessScreen> {
           },
           title: ExpansionTile(
             controlAffinity: ListTileControlAffinity.leading,
-            title: Text(currentProcess.title),
+            title: Text(currentListSteps[0]),
             children: [
-              Text(currentProcess.stages[1]),
+              Text(currentListDescr[0]),
             ],
           ),
           //subtitle: const Text('Supporting text'),
