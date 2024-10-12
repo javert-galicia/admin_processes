@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:admin_processes/data/process_list.dart';
 import 'package:flutter/material.dart';
-import 'package:admin_processes/process_items.dart';
+import 'package:admin_processes/view/process_items.dart';
 
 void main() => runApp(const AdminProcessApp());
 
