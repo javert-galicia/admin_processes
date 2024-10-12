@@ -11,7 +11,7 @@ class ProcessItems extends StatefulWidget {
 }
 
 class _ProcessItemsState extends State<ProcessItems> {
-  
+
   List<bool> checkboxValue = [];
   void checkBoxFilled(int j) {
    for (int i = 0; i < j; i++) {
@@ -25,6 +25,7 @@ class _ProcessItemsState extends State<ProcessItems> {
     String title = processList[widget.indexPage].title;
     List<String> currentListSteps = processList[widget.indexPage].stages;
     List<String> currentListDescr = processList[widget.indexPage].description;
+
     checkBoxFilled(currentListSteps.length);
 
     return Column(
