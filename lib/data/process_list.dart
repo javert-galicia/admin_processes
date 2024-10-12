@@ -3,6 +3,6 @@ import 'package:admin_processes/model/process_study.dart';
 const processList = [
   ProcessStudy('Uno', ['Dos', 'Prueba'], ['Tres', 'Probando']),
   ProcessStudy(
-      'Dos', ['Cuatro', 'qweweqeqqeqw'], ['Cinco', 'wqeqwewqeqwe']),
-  ProcessStudy('Tres', ['Dos3', 'Prueba3'], ['Tres3', 'Probando3']),
+      'Dos', ['Cuatro', 'qweweqeqqeqw','khglhklgkhlg'], ['Cinco', 'wqeqwewqeqwe','dfdsfdsfdsfsd']),
+  ProcessStudy('Tres', ['Dos3', 'Prueba3','lalala3','otrodato3'], ['Tres3', 'Probando3','dfsdfdfdsf','otro dato']),
 ];

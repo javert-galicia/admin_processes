@@ -19,6 +19,12 @@ class _ProcessItemsState extends State<ProcessItems> {
       checkboxValue.add(false);
     }
   }
+  Color backgroundColor=Colors.grey;
+  void backColor(int j){
+      if(j%2!=0){
+        backgroundColor = Colors.blueGrey;
+      }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,12 +34,16 @@ class _ProcessItemsState extends State<ProcessItems> {
     List<String> currentListDescr = processList[widget.indexPage].description;
 
     checkBoxFilled(currentListSteps.length);
+    backColor(widget.indexPage);
 
-    return Column(
-      children: [
-        Text(title),
-        Expanded(
-          child: ListView.builder(
+    return Container(
+      color: backgroundColor,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(title),
+          ListView.builder(
+            shrinkWrap: true,
             itemCount: currentListSteps.length,
             itemBuilder: (context, index) {
               return CheckboxListTile(
@@ -56,8 +66,9 @@ class _ProcessItemsState extends State<ProcessItems> {
               );
             },
           ),
-        ),
-      ],
+          const SizedBox(height: 40,),
+        ],
+      ),
     );
   }
 }
