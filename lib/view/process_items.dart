@@ -12,6 +12,7 @@ class ProcessItems extends StatefulWidget {
 
 class _ProcessItemsState extends State<ProcessItems> {
 
+  List<Color> colors = [Colors.yellow,Colors.red,Colors.blue,Colors.green,Colors.purple];
   List<bool> checkboxValue = [];
   void checkBoxFilled(int j) {
    for (int i = 0; i < j; i++) {
@@ -37,12 +38,15 @@ class _ProcessItemsState extends State<ProcessItems> {
             itemBuilder: (context, index) {
               return CheckboxListTile(
                 value: checkboxValue[index],
-                title: ExpansionTile(
-                  controlAffinity: ListTileControlAffinity.leading,
-                  title: Text(currentListSteps[index]),
-                  children: [
-                    Text(currentListDescr[index]),
-                  ],
+                title: Container(
+                  color: colors[index],
+                  child: ExpansionTile(
+                    controlAffinity: ListTileControlAffinity.leading,
+                    title: Text(currentListSteps[index]),
+                    children: [
+                      Text(currentListDescr[index]),
+                    ],
+                  ),
                 ),
                 onChanged: (value) {
                   setState(() {
