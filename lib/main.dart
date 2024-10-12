@@ -12,7 +12,9 @@ class AdminProcessApp extends StatelessWidget {
       theme: ThemeData(useMaterial3: true),
       home: Scaffold(
         appBar: AppBar(title: const Text('Admin Processes')),
-        body: const ProcessItems(),
+        body: const ProcessItems(
+          indexPage: 0,
+        ),
       ),
     );
   }
