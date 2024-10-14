@@ -11,24 +11,29 @@ class ProcessItems extends StatefulWidget {
 }
 
 class _ProcessItemsState extends State<ProcessItems> {
-
-  List<Color> colors = [Colors.yellow,Colors.red,Colors.blue,Colors.green,Colors.purple];
+  List<Color> colors = [
+    Colors.yellow,
+    Colors.red,
+    Colors.blue,
+    Colors.green,
+    Colors.purple
+  ];
   List<bool> checkboxValue = [];
   void checkBoxFilled(int j) {
-   for (int i = 0; i < j; i++) {
+    for (int i = 0; i < j; i++) {
       checkboxValue.add(false);
     }
   }
-  Color backgroundColor=Colors.grey;
-  void backColor(int j){
-      if(j%2!=0){
-        backgroundColor = Colors.blueGrey;
-      }
+
+  Color backgroundColor = Colors.grey;
+  void backColor(int j) {
+    if (j % 2 != 0) {
+      backgroundColor = Colors.blueGrey;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-
     String title = processList[widget.indexPage].title;
     List<String> currentListSteps = processList[widget.indexPage].stages;
     List<String> currentListDescr = processList[widget.indexPage].description;
@@ -47,14 +52,27 @@ class _ProcessItemsState extends State<ProcessItems> {
             itemCount: currentListSteps.length,
             itemBuilder: (context, index) {
               return Container(
-                color: colors[index],
+                color: checkboxValue[index] ? Colors.black : colors[index],
                 child: CheckboxListTile(
                   value: checkboxValue[index],
                   title: ExpansionTile(
+                    shape: const Border(),
                     controlAffinity: ListTileControlAffinity.leading,
                     title: Text(currentListSteps[index]),
                     children: [
-                      Text(currentListDescr[index]),
+                      Card.outlined(
+                        color: Colors.white,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10),
+                              child: Text(currentListDescr[index]),
+                            ),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                   onChanged: (value) {
@@ -66,7 +84,9 @@ class _ProcessItemsState extends State<ProcessItems> {
               );
             },
           ),
-          const SizedBox(height: 40,),
+          const SizedBox(
+            height: 40,
+          ),
         ],
       ),
     );
