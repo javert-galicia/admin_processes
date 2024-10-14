@@ -46,23 +46,23 @@ class _ProcessItemsState extends State<ProcessItems> {
             shrinkWrap: true,
             itemCount: currentListSteps.length,
             itemBuilder: (context, index) {
-              return CheckboxListTile(
-                value: checkboxValue[index],
-                title: Container(
-                  color: colors[index],
-                  child: ExpansionTile(
+              return Container(
+                color: colors[index],
+                child: CheckboxListTile(
+                  value: checkboxValue[index],
+                  title: ExpansionTile(
                     controlAffinity: ListTileControlAffinity.leading,
                     title: Text(currentListSteps[index]),
                     children: [
                       Text(currentListDescr[index]),
                     ],
                   ),
+                  onChanged: (value) {
+                    setState(() {
+                      checkboxValue[index] = value!;
+                    });
+                  },
                 ),
-                onChanged: (value) {
-                  setState(() {
-                    checkboxValue[index] = value!;
-                  });
-                },
               );
             },
           ),
