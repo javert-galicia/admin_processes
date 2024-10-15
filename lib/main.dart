@@ -14,12 +14,40 @@ class AdminProcessApp extends StatelessWidget {
     return MaterialApp(
       scrollBehavior: AppScrollBehavior(),
       theme: ThemeData(useMaterial3: true),
-      home: Scaffold(
-        appBar: AppBar(title: const Text('Admin Processes')),
-        body:
-          PageView.builder(
-            itemBuilder: (context, index) => ProcessItems(indexPage: index % processList.length),
-          ),
+      home: const HomeTree(),
+    );
+  }
+}
+
+class HomeTree extends StatelessWidget {
+  const HomeTree({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Admin Processes'),
+        actions: [
+          IconButton(
+              onPressed: () {
+                showDialog(
+                    context: context,
+                    builder: (context) => const AboutDialog(
+                          applicationVersion: '1.0',
+                          applicationName: 'Admin Processes',
+                          //applicationLegalese: 'License GPL-3.0',
+                          children: [
+                            Text(
+                                'For more information visit https://admin.jgalicia.com')
+                          ],
+                        ));
+              },
+              icon: const Icon(Icons.more_vert)),
+        ],
+      ),
+      body: PageView.builder(
+        itemBuilder: (context, index) =>
+            ProcessItems(indexPage: index % processList.length),
       ),
     );
   }

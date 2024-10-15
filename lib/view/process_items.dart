@@ -12,11 +12,11 @@ class ProcessItems extends StatefulWidget {
 
 class _ProcessItemsState extends State<ProcessItems> {
   List<Color> colors = [
-    Colors.yellow,
-    Colors.red,
-    Colors.blue,
-    Colors.green,
-    Colors.purple
+    const Color.fromRGBO(75, 17, 57, 1),
+    const Color.fromRGBO(59, 64, 88, 1),
+    const Color.fromRGBO(42, 110, 120, 1),
+    const Color.fromRGBO(122, 144, 124, 1),
+    const Color.fromRGBO(201, 177, 128, 1),
   ];
   List<bool> checkboxValue = [];
   void checkBoxFilled(int j) {
@@ -25,28 +25,38 @@ class _ProcessItemsState extends State<ProcessItems> {
     }
   }
 
-  Color backgroundColor = Colors.grey;
+  Color backgroundColor = const Color.fromRGBO(94, 116, 167, 1);
   void backColor(int j) {
     if (j % 2 != 0) {
-      backgroundColor = Colors.blueGrey;
+      backgroundColor = const Color.fromRGBO(114, 185, 223, 1);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    String title = processList[widget.indexPage].title;
-    List<String> currentListSteps = processList[widget.indexPage].stages;
-    List<String> currentListDescr = processList[widget.indexPage].description;
+    int k = widget.indexPage;
+    String title = processList[k].title;
+    List<String> currentListSteps = processList[k].stages;
+    List<String> currentListDescr = processList[k].description;
 
     checkBoxFilled(currentListSteps.length);
-    backColor(widget.indexPage);
+    backColor(k);
 
     return Container(
       color: backgroundColor,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(title),
+          Text(
+            title,
+            style: TextStyle(
+              color: k%2 != 0 ? Colors.black : Colors.white,
+              fontSize: 30,
+            ),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
           ListView.builder(
             shrinkWrap: true,
             itemCount: currentListSteps.length,
@@ -58,7 +68,13 @@ class _ProcessItemsState extends State<ProcessItems> {
                   title: ExpansionTile(
                     shape: const Border(),
                     controlAffinity: ListTileControlAffinity.leading,
-                    title: Text(currentListSteps[index]),
+                    title: Text(
+                      currentListSteps[index],
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                      ),
+                    ),
                     children: [
                       Card.outlined(
                         color: Colors.white,
