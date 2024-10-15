@@ -16,12 +16,10 @@ class AdminProcessApp extends StatelessWidget {
       theme: ThemeData(useMaterial3: true),
       home: Scaffold(
         appBar: AppBar(title: const Text('Admin Processes')),
-        body: PageView(
-          children: [
-            for(int i=0;i<processList.length;i++)
-              ProcessItems(indexPage: i)
-          ],
-        ),
+        body:
+          PageView.builder(
+            itemBuilder: (context, index) => ProcessItems(indexPage: index % processList.length),
+          ),
       ),
     );
   }
