@@ -52,6 +52,7 @@ class _ProcessItemsState extends State<ProcessItems> {
             style: TextStyle(
               color: k%2 != 0 ? Colors.black : Colors.white,
               fontSize: 30,
+              fontFamily: 'Nunito',
             ),
           ),
           const SizedBox(
@@ -73,6 +74,7 @@ class _ProcessItemsState extends State<ProcessItems> {
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 20,
+                        fontFamily: 'Lato',
                       ),
                     ),
                     children: [
