@@ -35,7 +35,7 @@ class HomeTree extends StatelessWidget {
                     builder: (context) => const AboutDialog(
                           applicationVersion: '1.0',
                           applicationName: 'Admin Processes',
-                          //applicationLegalese: 'License GPL-3.0',
+                          applicationLegalese: 'MIT',
                           children: [
                             Text(
                                 'For more information visit https://admin.jgalicia.com')
