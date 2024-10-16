@@ -1,3 +1,4 @@
+import 'package:admin_processes/model/process_stage.dart';
 import 'package:flutter/material.dart';
 import 'package:admin_processes/data/process_list.dart';
 
@@ -36,8 +37,7 @@ class _ProcessItemsState extends State<ProcessItems> {
   Widget build(BuildContext context) {
     int k = widget.indexPage;
     String title = processList[k].title;
-    List<String> currentListSteps = processList[k].stages;
-    List<String> currentListDescr = processList[k].description;
+    List<ProcessStage> currentListSteps = processList[k].processStage.toList();
 
     checkBoxFilled(currentListSteps.length);
     backColor(k);
@@ -53,6 +53,7 @@ class _ProcessItemsState extends State<ProcessItems> {
               color: k%2 != 0 ? Colors.black : Colors.white,
               fontSize: 30,
               fontFamily: 'Nunito',
+              fontWeight: FontWeight.bold,
             ),
           ),
           const SizedBox(
@@ -70,7 +71,7 @@ class _ProcessItemsState extends State<ProcessItems> {
                     shape: const Border(),
                     controlAffinity: ListTileControlAffinity.leading,
                     title: Text(
-                      currentListSteps[index],
+                      currentListSteps[index].stage,
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 20,
@@ -79,14 +80,18 @@ class _ProcessItemsState extends State<ProcessItems> {
                     ),
                     children: [
                       Card.outlined(
-                        color: Colors.white,
+                        color: const Color.fromARGB(255, 254, 232, 159),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Padding(
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 10),
-                              child: Text(currentListDescr[index]),
+                              child: Text(currentListSteps[index].description,style: const TextStyle(
+                                fontFamily: 'Lato',
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                              ),),
                             ),
                           ],
                         ),
