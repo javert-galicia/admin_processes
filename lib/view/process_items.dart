@@ -81,9 +81,10 @@ class _ProcessItemsState extends State<ProcessItems> {
                     children: [
                       Card.outlined(
                         color: const Color.fromARGB(255, 254, 232, 159),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
+                        child:
+                        //Row(
+                          //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          //children: [
                             Padding(
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 10),
@@ -93,8 +94,8 @@ class _ProcessItemsState extends State<ProcessItems> {
                                 fontWeight: FontWeight.bold,
                               ),),
                             ),
-                          ],
-                        ),
+                          //],
+                        //),
                       ),
                     ],
                   ),
