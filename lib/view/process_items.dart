@@ -42,76 +42,80 @@ class _ProcessItemsState extends State<ProcessItems> {
     checkBoxFilled(currentListSteps.length);
     backColor(k);
 
-    return Container(
-      color: backgroundColor,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            title,
-            style: TextStyle(
-              color: k%2 != 0 ? Colors.black : Colors.white,
-              fontSize: 30,
-              fontFamily: 'Nunito',
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          ListView.builder(
-            shrinkWrap: true,
-            itemCount: currentListSteps.length,
-            itemBuilder: (context, index) {
-              return Container(
-                color: checkboxValue[index] ? Colors.black : colors[index],
-                child: CheckboxListTile(
-                  value: checkboxValue[index],
-                  title: ExpansionTile(
-                    shape: const Border(),
-                    controlAffinity: ListTileControlAffinity.leading,
-                    title: Text(
-                      currentListSteps[index].stage,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontFamily: 'Lato',
-                      ),
-                    ),
-                    children: [
-                      Card.outlined(
-                        color: const Color.fromARGB(255, 254, 232, 159),
-                        child:
-                        //Row(
-                          //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          //children: [
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 10),
-                              child: Text(currentListSteps[index].description,style: const TextStyle(
-                                fontFamily: 'Lato',
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                              ),),
-                            ),
-                          //],
-                        //),
-                      ),
-                    ],
-                  ),
-                  onChanged: (value) {
-                    setState(() {
-                      checkboxValue[index] = value!;
-                    });
-                  },
+    return Center(
+      child: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Container(
+          color: backgroundColor,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                title,
+                style: TextStyle(
+                  color: k%2 != 0 ? Colors.black : Colors.white,
+                  fontSize: 30,
+                  fontFamily: 'Nunito',
+                  fontWeight: FontWeight.bold,
                 ),
-              );
-            },
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              ListView.builder(
+                shrinkWrap: true,
+                itemCount: currentListSteps.length,
+                itemBuilder: (context, index) {
+                  return Container(
+                    color: checkboxValue[index] ? Colors.black : colors[index],
+                    child: CheckboxListTile(
+                      value: checkboxValue[index],
+                      title: ExpansionTile(
+                        shape: const Border(),
+                        controlAffinity: ListTileControlAffinity.leading,
+                        title: Text(
+                          currentListSteps[index].stage,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontFamily: 'Lato',
+                          ),
+                        ),
+                        children: [
+                          Card.outlined(
+                            color: const Color.fromARGB(255, 254, 232, 159),
+                            child:
+                                // ignore: sized_box_for_whitespace
+                                Container(
+                                  width: double.infinity,
+                                  child: Padding(
+                                    padding:
+                                        const EdgeInsets.symmetric(horizontal: 10),
+                                    child: Text(currentListSteps[index].description,style: const TextStyle(
+                                      fontFamily: 'Lato',
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold,
+                                    ),),
+                                  ),
+                                ),
+                          ),
+                        ],
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          checkboxValue[index] = value!;
+                        });
+                      },
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(
+                height: 40,
+              ),
+            ],
           ),
-          const SizedBox(
-            height: 40,
-          ),
-        ],
+        ),
       ),
     );
   }
