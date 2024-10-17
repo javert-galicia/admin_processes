@@ -42,21 +42,27 @@ class _ProcessItemsState extends State<ProcessItems> {
     checkBoxFilled(currentListSteps.length);
     backColor(k);
 
-    return Center(
-      child: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: Container(
+    return Stack(
+      children: [
+        Container(
           color: backgroundColor,
+        ),
+        Center(
+        child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                title,
-                style: TextStyle(
-                  color: k%2 != 0 ? Colors.black : Colors.white,
-                  fontSize: 30,
-                  fontFamily: 'Nunito',
-                  fontWeight: FontWeight.bold,
+              TextButton(
+                onPressed: (){},
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    color: k%2 != 0 ? Colors.black : Colors.white,
+                    fontSize: 30,
+                    fontFamily: 'Nunito',
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
               const SizedBox(
@@ -117,6 +123,6 @@ class _ProcessItemsState extends State<ProcessItems> {
           ),
         ),
       ),
-    );
+    ]);
   }
 }

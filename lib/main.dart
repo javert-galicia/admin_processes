@@ -13,14 +13,23 @@ class AdminProcessApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       scrollBehavior: AppScrollBehavior(),
-      theme: ThemeData(useMaterial3: true),
-      home:  const HomeTree(),
+      theme: ThemeData(
+        useMaterial3: true,
+        appBarTheme: const AppBarTheme(
+            backgroundColor: Color.fromRGBO(34, 71, 237, 1),
+            foregroundColor: Colors.white),
+        checkboxTheme: CheckboxThemeData(
+          fillColor: WidgetStateProperty.all(const Color.fromRGBO(34, 71, 237, 1)),side: const BorderSide(color: Colors.white),
+        ),
+        expansionTileTheme: const ExpansionTileThemeData(iconColor: Colors.white, collapsedIconColor: Colors.white ),
+      ),
+      home: const HomeTree(),
     );
   }
 }
 
 class HomeTree extends StatelessWidget {
-   const HomeTree({super.key});
+  const HomeTree({super.key});
 
   @override
   Widget build(BuildContext context) {
