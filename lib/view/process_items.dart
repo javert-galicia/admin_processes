@@ -37,6 +37,7 @@ class _ProcessItemsState extends State<ProcessItems> {
   Widget build(BuildContext context) {
     int k = widget.indexPage;
     String title = processList[k].title;
+    String descriptionStudy = processList[k].description;
     List<ProcessStage> currentListSteps = processList[k].processStage.toList();
 
     checkBoxFilled(currentListSteps.length);
@@ -54,7 +55,44 @@ class _ProcessItemsState extends State<ProcessItems> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               TextButton(
-                onPressed: (){},
+                onPressed: () => showDialog(
+                    context: context,
+                    builder: (context) => Dialog(
+                      backgroundColor:const Color.fromARGB(255, 254, 232, 159),
+                          child: Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                 Text(
+                                  title,
+                                  style: const TextStyle(
+                                    fontSize: 30,
+                                    fontFamily: 'Nunito',
+                                     fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 15),
+                               Text(
+                                  descriptionStudy,
+                                  style: const TextStyle(
+                                   fontSize: 20,
+                                    fontFamily: 'Lato',
+                                  ),
+                                ),
+                                  const SizedBox(height: 15),
+                                TextButton(
+                                   onPressed: () {
+                                    Navigator.pop(context);
+                                    },
+                                  child: const Text('Close'),
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      ),
                 child: Text(
                   title,
                   style: TextStyle(
