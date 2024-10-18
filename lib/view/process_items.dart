@@ -19,6 +19,15 @@ class _ProcessItemsState extends State<ProcessItems> {
     const Color.fromRGBO(122, 144, 124, 1),
     const Color.fromRGBO(201, 177, 128, 1),
   ];
+  Color backColorStage(int j) {
+    if (j < colors.length) {
+      return colors[j];
+    }
+    else{
+      return backColorStage(j-colors.length);
+    }
+  }
+
   List<bool> checkboxValue = [];
   void checkBoxFilled(int j) {
     for (int i = 0; i < j; i++) {
@@ -111,7 +120,7 @@ class _ProcessItemsState extends State<ProcessItems> {
                 itemCount: currentListSteps.length,
                 itemBuilder: (context, index) {
                   return Container(
-                    color: checkboxValue[index] ? Colors.black : colors[index],
+                    color: checkboxValue[index] ? Colors.black : backColorStage(index),
                     child: CheckboxListTile(
                       value: checkboxValue[index],
                       title: ExpansionTile(
