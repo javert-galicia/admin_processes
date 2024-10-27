@@ -70,4 +70,12 @@ final List<ProcessStudy> processList = [
     ProcessStage('Línea de Tiempo', ''),
     ProcessStage('Business Model Canvas', ''),
   ]),
+  ProcessStudy('SMART', 'es una metodología utilizada para definir objetivos claros y alcanzables. Cada letra representa un criterio para evaluar los objetivos.', [
+    ProcessStage('Specific', 'Claro y preciso.'),
+    ProcessStage('Measurable', 'Cuantificable para rastrear el progreso.'),
+    ProcessStage('Achievable', 'Realista y alcanzable.'),
+    ProcessStage('Relevant', 'Importante para tus necesidades.'),
+    ProcessStage('Time-bound', 'Limitado en el tiempo con una fecha límite clara.'),
+  ]),
+
 ];
