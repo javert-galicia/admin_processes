@@ -116,6 +116,7 @@ class _ProcessItemsState extends State<ProcessItems> {
                 height: 20,
               ),
               ListView.builder(
+                physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 itemCount: currentListSteps.length,
                 itemBuilder: (context, index) {

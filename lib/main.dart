@@ -47,7 +47,7 @@ class HomeTree extends StatelessWidget {
                           applicationLegalese: 'MIT',
                           children: [
                             Text(
-                                'For more information visit https://admin.jgalicia.com')
+                                'For more information visit https://jgalicia.com')
                           ],
                         ));
               },
@@ -68,5 +68,7 @@ class AppScrollBehavior extends MaterialScrollBehavior {
         PointerDeviceKind.touch,
         PointerDeviceKind.mouse,
         PointerDeviceKind.trackpad,
+        PointerDeviceKind.stylus,
+        PointerDeviceKind.unknown,
       };
 }
