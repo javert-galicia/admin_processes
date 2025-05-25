@@ -43,7 +43,7 @@ class HomeTree extends StatelessWidget {
                     context: context,
                     builder: (context) => const AboutDialog(
                           applicationVersion: '1.0',
-                          applicationName: 'Admin Processes',
+                          applicationName: 'Procesos Administrativos',
                           applicationLegalese: '2025 MIT License',
                           children: [
                             Text(
