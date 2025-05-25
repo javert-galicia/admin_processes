@@ -44,10 +44,10 @@ class HomeTree extends StatelessWidget {
                     builder: (context) => const AboutDialog(
                           applicationVersion: '1.0',
                           applicationName: 'Admin Processes',
-                          applicationLegalese: 'MIT',
+                          applicationLegalese: '2025 MIT License',
                           children: [
                             Text(
-                                'For more information visit https://jgalicia.com')
+                                'For more information: https://jgalicia.com')
                           ],
                         ));
               },
