@@ -8,7 +8,11 @@ Colección de **procesos administrativos** en el que cada uno representa un conj
 * Sirve para organizar procedimientos y cumplir metas y objetivos.
 * Debe estar alineado a los objetivos de la empresa y ser aplicado de manera efectiva y simple.
 
-# Licencia
+## Screenshots
+
+![Pantalla de Admin Processes 1](/docs/screenshots/admin-processes-screen-1.png) ![Pantalla de Admin Processes 2](/docs/screenshots/admin-processes-screen-2.png) ![Pantalla de Admin Processes 3](/docs/screenshots/admin-processes-screen-3.png) ![Pantalla de Admin Processes 4](/docs/screenshots/admin-processes-screen-4.png)
+
+## Licencia
 
 2025 MIT Software totalmente gratuito y de código abierto.
 
