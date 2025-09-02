@@ -35,7 +35,7 @@ class HomeTree extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Admin Processes'),
+        title: const Text('Procesos Administrativos'),
         actions: [
           IconButton(
               onPressed: () {

@@ -77,5 +77,12 @@ final List<ProcessStudy> processList = [
     ProcessStage('Relevant', 'Importante para tus necesidades.'),
     ProcessStage('Time-bound', 'Limitado en el tiempo con una fecha límite clara.'),
   ]),
-
+  ProcessStudy('MECE', 'es el acrónimo de «Mutuamente Excluyente, Colectivamente Exhaustivo». Representa una metodología de organización y clasificación de la información. Fue desarrollada por McKinsey & Company, una de las firmas de consultoría más potentes del mundo. Esta herramienta se ha convertido en una herramienta fundamental para la resolución de problemas empresariales.', [
+    ProcessStage('Mutuamente Excluyente', 'Cada categoría es única y no se superpone con otras.'),
+    ProcessStage('Colectivamente Exhaustivo', 'Juntas, las categorías cubren todas las posibilidades.'),
+    ProcessStage('Definir el alcance', 'Antes de comenzar, es crucial definir claramente el alcance del problema o la información que se está tratando. Esto proporciona límites claros y ayuda a evitar la inclusión de elementos irrelevantes.'),
+    ProcessStage('Identificar categorías mutuamente excluyentes', 'Dentro del ámbito definido, identifica categorías que sean mutuamente excluyentes. Cada elemento debe pertenecer a una y solo una de estas categorías.'),
+    ProcessStage('Verificar la exhaustividad', 'Asegúrate de que las categorías identificadas abarquen toda la información relevante. No debe haber lagunas en la cobertura de la información.'),
+    ProcessStage('Refinar y ajustar', 'Es posible que sea necesario iterar y refinar las categorías a medida que se profundiza en la información. Esto es una parte natural del proceso y garantiza que la estructura MECE sea precisa y completa.'),
+  ]),
 ];
