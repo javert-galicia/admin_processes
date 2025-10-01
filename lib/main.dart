@@ -44,7 +44,7 @@ class HomeTree extends StatelessWidget {
                     builder: (context) => const AboutDialog(
                           applicationVersion: '1.0',
                           applicationName: 'Procesos Administrativos',
-                          applicationLegalese: '2025 MIT License',
+                          applicationLegalese: '2025 Copyright JGalicia',
                           children: [
                             Text(
                                 'For more information: https://jgalicia.com')
