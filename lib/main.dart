@@ -42,7 +42,7 @@ class HomeTree extends StatelessWidget {
                 showDialog(
                     context: context,
                     builder: (context) => const AboutDialog(
-                          applicationVersion: '1.0',
+                          applicationVersion: '0.1.0',
                           applicationName: 'Procesos Administrativos',
                           applicationLegalese: '2025 Copyright Javert Galicia',
                           children: [
