@@ -44,10 +44,10 @@ class HomeTree extends StatelessWidget {
                     builder: (context) => const AboutDialog(
                           applicationVersion: '0.1.0',
                           applicationName: 'Procesos Administrativos',
-                          applicationLegalese: '2025 Copyright Javert Galicia',
+                          applicationLegalese: '2025 MIT License',
                           children: [
                             Text(
-                                'For more information: https://jgalicia.com')
+                                'Para más información visita: Javier Galicia: jgalicia.com')
                           ],
                         ));
               },

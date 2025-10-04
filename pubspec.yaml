@@ -1,7 +1,7 @@
 name: admin_processes
 description: "Sistema de procesos administrativos organizados para facilitar el logro eficiente de objetivos, con acceso ágil y revisión continua desde cualquier dispositivo."
 publish_to: 'none'
-version: 0.1.0+2
+version: 0.1.0+4
 
 environment:
   sdk: ^3.5.3
