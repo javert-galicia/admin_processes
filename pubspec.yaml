@@ -14,6 +14,8 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^4.0.0
+  msix: ^3.16.12
+  flutter_launcher_icons: ^0.13.1
 
 flutter:
   uses-material-design: true
@@ -26,3 +28,19 @@ flutter:
     - family: Lato
       fonts:
         - asset: assets/fonts/Lato-Regular.ttf
+
+flutter_launcher_icons:
+  windows:
+    generate: true
+    image_path: "assets/logo_400.png"
+    icon_size: 48
+
+
+msix_config:
+  display_name: admin_processes
+  publisher_display_name: Javert Galicia
+  identity_name: JavertGalicia.adminprocesses
+  publisher: CN=2E6F20B6-F5D2-4834-8474-C87CD7C313F1
+  sign_msix: false
+  msix_version: 1.0.1.0
+  logo_path: "assets/logo_400.png"
