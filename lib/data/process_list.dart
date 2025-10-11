@@ -1,88 +1,9 @@
 import 'package:admin_processes/model/process_stage.dart';
 import 'package:admin_processes/model/process_study.dart';
+import 'package:admin_processes/data/process_list_localized.dart';
+import 'package:flutter/material.dart';
 
-final List<ProcessStudy> processList = [
-  ProcessStudy('Proceso Administrativo', 'Los procesos administrativos son esenciales para la gestión efectiva de cualquier organización.', [
-    ProcessStage('Planeación', 'Establecer objetivos y determinar las acciones necesarias para lograrlos.'),
-    ProcessStage('Organización', 'Asignar recursos, tareas y responsabilidades para alcanzar los objetivos.'),
-    ProcessStage('Dirección', 'Liderar, motivar y guiar a los empleados para cumplir con las metas establecidas.'),
-    ProcessStage('Control', 'Evaluar el desempeño y tomar medidas correctivas si es necesario para asegurar que se cumplen los objetivos.'),
-  ]),
-  ProcessStudy('5S', 'Las 5S son una metodología japonesa enfocada en mejorar la eficiencia y la calidad en el lugar de trabajo a través de la organización y la limpieza.', [
-    ProcessStage('Seiri (Clasificar)', 'Eliminar lo innecesario del área de trabajo, quedándote solo con lo esencial.'),
-    ProcessStage('Seiton (Ordenar)', 'Organizar y etiquetar los elementos de manera que sean fáciles de encontrar y usar.'),
-    ProcessStage('Seiso (Limpiar)', 'Mantener el lugar de trabajo limpio y ordenado a diario.'),
-    ProcessStage('Seiketsu (Estandarizar)','Establecer normas y procedimientos para mantener el orden y la limpieza.'),
-    ProcessStage('Shitsuke (Disciplina)','Fomentar la autodisciplina y el compromiso con las prácticas de las 5S para asegurar su continuidad.'),
-  ]),
-  ProcessStudy('Six Sigma (DMAIC)', 'Six Sigma es una metodología de gestión que se enfoca en mejorar la calidad mediante la identificación y eliminación de defectos en los procesos. Utiliza un enfoque basado en datos y herramientas estadísticas para medir y analizar la variabilidad. El objetivo final es alcanzar un nivel de calidad donde solo haya 3,4 defectos por millón de oportunidades.', [
-    ProcessStage('Definir', 'Identificar el problema o la oportunidad de mejora.'),
-    ProcessStage('Medir', 'Recopilar datos relevantes para entender el problema.'),
-    ProcessStage('Analizar', 'Examinar los datos para identificar las causas raíz del problema.'),
-    ProcessStage('Mejorar (Improve)', 'Desarrollar y aplicar soluciones para abordar las causas raíz.'),
-    ProcessStage('Controlar', 'Implementar controles para asegurar que las mejoras se mantengan.'),
-  ]),
-  ProcessStudy('Proceso de Selección', 'Proceso recomendado para la contratación de nuevo personal.', [
-    ProcessStage('Análisis de necesidades','El análisis de necesidades es el proceso que utilizan las organizaciones para identificar las deficiencias o problemas de una organización y señalar la causa raíz.'),
-    ProcessStage('Reclutamiento', 'Acción y efecto de reclutar.'),
-    ProcessStage('Recepción de Candidaturas', 'Recolección de información sobre el cargo, el uso de técnicas como entrevistas y pruebas para evaluar a los candidatos.'),
-    ProcessStage('Preselección', 'Se revisan los currículums y se eligen a los candidatos más idóneos para avanzar a la siguiente etapa, que generalmente incluye entrevistas.'),
-    ProcessStage('Pruebas', 'Evaluación técnica de los candidatos.'),
-    ProcessStage('Entrevista', 'Vista, concurrencia y conferencia de dos o más personas en lugar determinado, para tratar o resolver un negocio.'),
-    ProcessStage('Valoración de Decisión', 'Consiste en reunir la información, evaluar alternativas y, luego, tomar la mejor decisión final posible. '),
-    ProcessStage('Contratación', 'Acción y efecto de contratar.'),
-    ProcessStage('Incorporación', 'Es la acción y efecto de unir o agregar algo a otra cosa para formar un todo. '),
-    ProcessStage('Seguimiento', 'Acción y efecto de seguir o seguirse.'),
-  ]),
-  ProcessStudy('Marca', 'Proceso para evaluar el uso y evaluación de la Marca.', [
-    ProcessStage('Servicio al Cliente', 'Es un concepto propio del ámbito de los negocios que engloba las políticas, acciones y disposiciones de una empresa respecto al trato y al contacto con los consumidores antes, durante y después de producirse una compra o contratación de prestación.'),
-    ProcessStage('Precio', 'El precio es la cantidad de dinero necesaria para adquirir un bien o servicio.'),
-    ProcessStage('Beneficios del Producto', 'Características del producto o servicio que son percibidas por el consumidor como una ventaja diferencial o ganancia actual y real.'),
-    ProcessStage('Website & Social Media', 'Se refiere a un conjunto de plataformas digitales que permiten la interacción y comunicación entre usuarios.'),
-    ProcessStage('Percepción', 'Sensación interior que resulta de una impresión material producida en los sentidos corporales.'),
-    ProcessStage('Diseño Empaque', 'Diseño Gráfico encargada de concebir la forma y el diseño gráfico del empaque de un producto determinado.'),
-    ProcessStage('Logotipo', 'Símbolo gráfico peculiar de una empresa, conmemoración, marca o producto.'),
-    ProcessStage('Colores, Tipo y Etiquetado', 'Es un proceso que permite la identificación de productos y su reconocimiento por parte de los consumidores. '),
-  ]),
-  ProcessStudy('La Pirámide de Maslow', 'También conocida como la Jerarquía de Necesidades de Maslow, es una teoría psicológica que organiza las necesidades humanas en niveles, de acuerdo a su importancia y prioridad.', [
-    ProcessStage('Necesidades Fisiológicas', 'Son las más básicas, como el agua, la comida, el sueño y la vivienda.'),
-    ProcessStage('Seguridad', 'Incluyen la seguridad física, emocional y financiera, así como la salud y el bienestar.'),
-    ProcessStage('Afiliación', 'Relacionadas con el amor, la amistad y el sentido de pertenencia a un grupo.'),
-    ProcessStage('Reconocimiento', 'Refieren al respeto propio y de los demás, la autoestima y el reconocimiento.'),
-    ProcessStage('Autorrealización', 'Es el nivel más alto, donde se busca el desarrollo personal, la creatividad y el cumplimiento de metas personales.'),
-  ]),
-  ProcessStudy('Análisis FODA', 'Es una herramienta estratégica utilizada para evaluar las fortalezas, oportunidades, debilidades y amenazas de una organización o proyecto.', [
-    ProcessStage('Fortalezas', 'Características internas y positivas que dan ventajas frente a la competencia, como recursos exclusivos, capacidades fuertes o una buena reputación.'),
-    ProcessStage('Oportunidades', 'Factores externos que la organización puede aprovechar para crecer o mejorar, como tendencias de mercado favorables o cambios en la legislación.'),
-    ProcessStage('Debilidades', 'Aspectos internos que limitan el rendimiento o el éxito, como falta de recursos, habilidades insuficientes o procesos ineficientes.'),
-    ProcessStage('Amenazas', 'Factores externos que podrían causar problemas o daños a la organización, como la competencia intensa, cambios económicos o regulaciones desfavorables.'),
-  ]),
-  ProcessStudy('Plan de Negocios', 'Es un documento escrito que describe detalladamente cómo una empresa planea alcanzar sus objetivos.', [
-    ProcessStage('Resumen Ejecutivo', 'Es un documento conciso y claro que resume los aspectos más importantes de un informe o proyecto.'),
-    ProcessStage('Misión', 'Poder, facultad que se da a alguien de ir a desempeñar algún cometido.'),
-    ProcessStage('Antecedentes', 'Son eventos, hechos o circunstancias previas que son relevantes para comprender una situación o fenómeno actual. Son la base histórica que influye en lo que está sucediendo en el presente.'),
-    ProcessStage('Descripción del Producto', 'Es una breve explicación escrita de las características, beneficios y cualidades de un producto o servicio.'),
-    ProcessStage('Plan de Marketing', 'Es un documento estratégico que describe las acciones necesarias para alcanzar los objetivos de marketing de una empresa.'),
-    ProcessStage('Análisis de la Competencia', 'Es el proceso que pone en práctica una empresa para saber cómo actuar en el ambiente competitivo. Este proceso empieza reconociendo a sus competidores para determinar cuáles son sus principales objetivos, estrategias, puntos débiles y fuertes.'),
-    ProcessStage('Análisis SWOT', '(también conocido como FODA o DAFO) Es una técnica que permite identificar y estudiar las fortalezas, debilidades, oportunidades y amenazas de un proyecto, empresa o individuo.'),
-    ProcessStage('Operaciones', 'Es un conjunto de acciones planificadas y ejecutadas para lograr un resultado específico, que puede abarcar desde tareas cotidianas hasta procedimientos técnicos o científicos complejos.'),
-    ProcessStage('Plan de Financiación', 'Es un documento estratégico que describe detalladamente cómo una empresa planea obtener y gestionar los recursos económicos necesarios para llevar a cabo sus operaciones, cumplir con sus obligaciones y alcanzar sus metas a corto, mediano y largo plazo.'),
-    ProcessStage('Línea de Tiempo', 'Es la representación visual cronológica de los eventos más importantes de un tema, un periodo, un proceso o la vida de una empresa. Permite organizar la información de manera que se pueda ver el orden histórico en que ocurrieron los hitos centrales.'),
-    ProcessStage('Business Model Canvas', 'Es una herramienta estratégica de negocios que permite construir de forma muy visual un modelo de negocios competitivo e innovador.'),
-  ]),
-  ProcessStudy('SMART', 'es una metodología utilizada para definir objetivos claros y alcanzables. Cada letra representa un criterio para evaluar los objetivos.', [
-    ProcessStage('Specific', 'Claro y preciso.'),
-    ProcessStage('Measurable', 'Cuantificable para rastrear el progreso.'),
-    ProcessStage('Achievable', 'Realista y alcanzable.'),
-    ProcessStage('Relevant', 'Importante para tus necesidades.'),
-    ProcessStage('Time-bound', 'Limitado en el tiempo con una fecha límite clara.'),
-  ]),
-  ProcessStudy('MECE', 'es el acrónimo de «Mutuamente Excluyente, Colectivamente Exhaustivo». Representa una metodología de organización y clasificación de la información. Fue desarrollada por McKinsey & Company, una de las firmas de consultoría más potentes del mundo. Esta herramienta se ha convertido en una herramienta fundamental para la resolución de problemas empresariales.', [
-    ProcessStage('Mutuamente Excluyente', 'Cada categoría es única y no se superpone con otras.'),
-    ProcessStage('Colectivamente Exhaustivo', 'Juntas, las categorías cubren todas las posibilidades.'),
-    ProcessStage('Definir el alcance', 'Antes de comenzar, es crucial definir claramente el alcance del problema o la información que se está tratando. Esto proporciona límites claros y ayuda a evitar la inclusión de elementos irrelevantes.'),
-    ProcessStage('Identificar categorías mutuamente excluyentes', 'Dentro del ámbito definido, identifica categorías que sean mutuamente excluyentes. Cada elemento debe pertenecer a una y solo una de estas categorías.'),
-    ProcessStage('Verificar la exhaustividad', 'Asegúrate de que las categorías identificadas abarquen toda la información relevante. No debe haber lagunas en la cobertura de la información.'),
-    ProcessStage('Refinar y ajustar', 'Es posible que sea necesario iterar y refinar las categorías a medida que se profundiza en la información. Esto es una parte natural del proceso y garantiza que la estructura MECE sea precisa y completa.'),
-  ]),
-];
+List<ProcessStudy> getProcessList(BuildContext context) {
+  final locale = Localizations.localeOf(context).languageCode;
+  return processListLocalized[locale] ?? processListLocalized['es']!;
+}
