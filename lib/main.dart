@@ -7,99 +7,358 @@ import 'package:admin_processes/l10n/localization.dart';
 import 'package:admin_processes/db/process_data_service.dart';
 import 'package:admin_processes/db/database_platform.dart';
 import 'package:admin_processes/model/process_study.dart';
+import 'package:admin_processes/model/process_stage.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'dart:io';
+import 'dart:convert';
 
 int _currentPage = 0;
 
 final ValueNotifier<Locale> appLocale = ValueNotifier(const Locale('en'));
+final ValueNotifier<bool> isDarkMode = ValueNotifier(false);
 
-void main() {
+class SettingsManager {
+  static const String _localeKey = 'app_locale';
+  static const String _themeKey = 'dark_mode';
+
+  static Future<void> saveLocale(String languageCode) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_localeKey, languageCode);
+  }
+
+  static Future<void> saveTheme(bool isDark) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_themeKey, isDark);
+  }
+
+  static Future<String> loadLocale() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_localeKey) ?? 'en';
+  }
+
+  static Future<bool> loadTheme() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_themeKey) ?? false;
+  }
+
+  static Future<bool> exportData() async {
+    try {
+      // Get available languages
+      final languages = await ProcessDataService.getAvailableLanguages();
+      
+      // Get all deletable processes for all languages
+      final Map<String, List<Map<String, dynamic>>> allProcesses = {};
+      bool hasData = false;
+      
+      for (String language in languages) {
+        final processes = await ProcessDataService.getProcessStudies(language);
+        final deletableProcesses = processes.where((p) => p.isDeletable).toList();
+        
+        if (deletableProcesses.isNotEmpty) {
+          hasData = true;
+          allProcesses[language] = deletableProcesses.map((process) {
+            return {
+              'id': process.id,
+              'title': process.title,
+              'description': process.description,
+              'language': process.language,
+              'isDeletable': process.isDeletable,
+              'stages': process.processStage.map((stage) => {
+                'id': stage.id,
+                'processStudyId': stage.processStudyId,
+                'stage': stage.stage,
+                'description': stage.description,
+              }).toList(),
+            };
+          }).toList();
+        }
+      }
+      
+      if (!hasData) {
+        return false; // No user-created processes to export
+      }
+      
+      // Create export data with metadata
+      final exportData = {
+        'version': '1.0',
+        'exportDate': DateTime.now().toIso8601String(),
+        'dataType': 'userProcesses',
+        'processes': allProcesses,
+      };
+      
+      // Get export location from user
+      String? outputFile = await FilePicker.platform.saveFile(
+        dialogTitle: 'Select export location',
+        fileName: 'user_processes_${DateTime.now().millisecondsSinceEpoch}.json',
+        type: FileType.custom,
+        allowedExtensions: ['json'],
+      );
+      
+      if (outputFile != null) {
+        // Write data to file
+        final file = File(outputFile);
+        await file.writeAsString(jsonEncode(exportData));
+        return true;
+      }
+      return false;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  static Future<bool> importData() async {
+    try {
+      // Let user select file
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['json'],
+        dialogTitle: 'Select file to import',
+      );
+
+      if (result != null && result.files.single.path != null) {
+        final file = File(result.files.single.path!);
+        final contents = await file.readAsString();
+        final Map<String, dynamic> importData = jsonDecode(contents);
+        
+        // Validate import data format
+        if (importData['dataType'] != 'userProcesses' || importData['processes'] == null) {
+          return false; // Invalid format
+        }
+        
+        final Map<String, dynamic> processesData = importData['processes'];
+        
+        // Import processes for each language
+        for (String language in processesData.keys) {
+          final List<dynamic> processesForLanguage = processesData[language];
+          
+          for (var processData in processesForLanguage) {
+            // Create ProcessStage objects
+            final List<ProcessStage> stages = (processData['stages'] as List<dynamic>)
+                .map((stageData) => ProcessStage(
+                      stageData['stage'],
+                      stageData['description'],
+                    ))
+                .toList();
+            
+            // Create ProcessStudy object
+            final ProcessStudy process = ProcessStudy(
+              processData['title'],
+              processData['description'],
+              stages,
+              language: language,
+              isDeletable: processData['isDeletable'] ?? true,
+            );
+            
+            // Add to database
+            await ProcessDataService.addProcessStudy(process, language);
+          }
+        }
+        
+        return true;
+      }
+      return false;
+    } catch (e) {
+      return false;
+    }
+  }
+}
+
+void main() async {
+  // Ensure Flutter bindings are initialized
+  WidgetsFlutterBinding.ensureInitialized();
+  
   // Initialize database platform before running the app
   DatabasePlatform.initialize();
+  
+  // Load saved settings
+  await _loadSettings();
+  
   runApp(AdminProcessApp());
+}
+
+Future<void> _loadSettings() async {
+  // Load saved locale
+  final savedLocale = await SettingsManager.loadLocale();
+  appLocale.value = Locale(savedLocale);
+  
+  // Load saved theme
+  final savedTheme = await SettingsManager.loadTheme();
+  isDarkMode.value = savedTheme;
 }
 
 class AdminProcessApp extends StatelessWidget {
   AdminProcessApp({super.key});
+
+  ThemeData _buildLightTheme() {
+    return ThemeData(
+      useMaterial3: true,
+      // Esquema de colores profesional - Azul corporativo moderno
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: const Color(0xFF1565C0), // Azul corporativo principal
+        brightness: Brightness.light,
+        primary: const Color(0xFF1565C0), // Azul corporativo
+        onPrimary: Colors.white,
+        secondary: const Color(0xFF0277BD), // Azul secundario
+        onSecondary: Colors.white,
+        surface: const Color(0xFFF8F9FA), // Gris claro para superficies
+        onSurface: const Color(0xFF1A1A1A), // Texto principal
+        background: const Color(0xFFFFFFFF), // Fondo blanco limpio
+        onBackground: const Color(0xFF1A1A1A),
+        error: const Color(0xFFD32F2F),
+        onError: Colors.white,
+      ),
+      appBarTheme: const AppBarTheme(
+        backgroundColor: Color(0xFF1565C0), // Azul corporativo
+        foregroundColor: Colors.white,
+        elevation: 2,
+        shadowColor: Colors.black26,
+        titleTextStyle: TextStyle(
+          color: Colors.white,
+          fontSize: 20,
+          fontWeight: FontWeight.w600,
+          fontFamily: 'Nunito',
+        ),
+      ),
+      checkboxTheme: CheckboxThemeData(
+        fillColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return const Color(0xFF1565C0);
+          }
+          return Colors.transparent;
+        }),
+        checkColor: WidgetStateProperty.all(Colors.white),
+        side: const BorderSide(color: Color(0xFF1565C0), width: 2.5),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+        materialTapTargetSize: MaterialTapTargetSize.padded,
+        splashRadius: 24,
+      ),
+      expansionTileTheme: const ExpansionTileThemeData(
+        iconColor: Colors.black, 
+        collapsedIconColor: Colors.black,
+        textColor: Colors.black,
+        collapsedTextColor: Colors.black,
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFF1565C0),
+          foregroundColor: Colors.white,
+          elevation: 2,
+          shadowColor: Colors.black26,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        ),
+      ),
+      cardTheme: CardThemeData(
+        color: Colors.white,
+        elevation: 2,
+        shadowColor: Colors.black12,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+      drawerTheme: const DrawerThemeData(
+        backgroundColor: Color(0xFFF8F9FA), // Usar el mismo color de superficie del tema
+        surfaceTintColor: Colors.transparent,
+      ),
+    );
+  }
+
+  ThemeData _buildDarkTheme() {
+    return ThemeData(
+      useMaterial3: true,
+      // Esquema de colores para modo oscuro
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: const Color(0xFF1B4F72), // Azul marino para modo oscuro
+        brightness: Brightness.dark,
+        primary: const Color(0xFF1B4F72), // Azul marino
+        onPrimary: const Color(0xFFFFFFFF),
+        secondary: const Color(0xFF81C784), // Verde secundario
+        onSecondary: const Color(0xFF1A1A1A),
+        surface: const Color(0xFF1E1E1E), // Superficie oscura
+        onSurface: const Color(0xFFE0E0E0), // Texto claro
+        background: const Color(0xFF121212), // Fondo oscuro
+        onBackground: const Color(0xFFE0E0E0),
+        error: const Color(0xFFEF5350),
+        onError: const Color(0xFF1A1A1A),
+      ),
+      appBarTheme: const AppBarTheme(
+        backgroundColor: Color(0xFF1B4F72), // Azul marino
+        foregroundColor: Colors.white,
+        elevation: 2,
+        shadowColor: Colors.black54,
+        titleTextStyle: TextStyle(
+          color: Colors.white,
+          fontSize: 20,
+          fontWeight: FontWeight.w600,
+          fontFamily: 'Nunito',
+        ),
+      ),
+      checkboxTheme: CheckboxThemeData(
+        fillColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return const Color(0xFF1B4F72);
+          }
+          return Colors.transparent;
+        }),
+        checkColor: WidgetStateProperty.all(const Color(0xFFFFFFFF)),
+        side: const BorderSide(color: Color(0xFF1B4F72), width: 2.5),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+        materialTapTargetSize: MaterialTapTargetSize.padded,
+        splashRadius: 24,
+      ),
+      expansionTileTheme: const ExpansionTileThemeData(
+        iconColor: Colors.white, 
+        collapsedIconColor: Colors.white,
+        textColor: Colors.white,
+        collapsedTextColor: Colors.white,
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFF1B4F72),
+          foregroundColor: const Color(0xFFFFFFFF),
+          elevation: 2,
+          shadowColor: Colors.black54,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        ),
+      ),
+      cardTheme: CardThemeData(
+        color: const Color(0xFF1E1E1E),
+        elevation: 2,
+        shadowColor: Colors.black54,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+      drawerTheme: const DrawerThemeData(
+        backgroundColor: Color(0xFF1E1E1E),
+        surfaceTintColor: Colors.transparent,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<Locale>(
       valueListenable: appLocale,
       builder: (context, locale, _) {
-        return MaterialApp(
+        return ValueListenableBuilder<bool>(
+          valueListenable: isDarkMode,
+          builder: (context, darkMode, _) {
+            return MaterialApp(
           scrollBehavior: AppScrollBehavior(),
-          theme: ThemeData(
-            useMaterial3: true,
-            // Esquema de colores profesional - Azul corporativo moderno
-            colorScheme: ColorScheme.fromSeed(
-              seedColor: const Color(0xFF1565C0), // Azul corporativo principal
-              brightness: Brightness.light,
-              primary: const Color(0xFF1565C0), // Azul corporativo
-              onPrimary: Colors.white,
-              secondary: const Color(0xFF0277BD), // Azul secundario
-              onSecondary: Colors.white,
-              surface: const Color(0xFFF8F9FA), // Gris claro para superficies
-              onSurface: const Color(0xFF1A1A1A), // Texto principal
-              background: const Color(0xFFFFFFFF), // Fondo blanco limpio
-              onBackground: const Color(0xFF1A1A1A),
-              error: const Color(0xFFD32F2F),
-              onError: Colors.white,
-            ),
-            appBarTheme: const AppBarTheme(
-              backgroundColor: Color(0xFF1565C0), // Azul corporativo
-              foregroundColor: Colors.white,
-              elevation: 2,
-              shadowColor: Colors.black26,
-              titleTextStyle: TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
-                fontFamily: 'Nunito',
-              ),
-            ),
-            checkboxTheme: CheckboxThemeData(
-              fillColor: WidgetStateProperty.resolveWith((states) {
-                if (states.contains(WidgetState.selected)) {
-                  return const Color(0xFF1565C0);
-                }
-                return Colors.transparent;
-              }),
-              checkColor: WidgetStateProperty.all(Colors.white),
-              side: const BorderSide(color: Color(0xFF1565C0), width: 2),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-            ),
-            expansionTileTheme: const ExpansionTileThemeData(
-              iconColor: Colors.black, 
-              collapsedIconColor: Colors.black,
-              textColor: Colors.black,
-              collapsedTextColor: Colors.black,
-            ),
-            elevatedButtonTheme: ElevatedButtonThemeData(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF1565C0),
-                foregroundColor: Colors.white,
-                elevation: 2,
-                shadowColor: Colors.black26,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              ),
-            ),
-            cardTheme: CardThemeData(
-              color: Colors.white,
-              elevation: 2,
-              shadowColor: Colors.black12,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            drawerTheme: const DrawerThemeData(
-              backgroundColor: Color(0xFFF8F9FA),
-              surfaceTintColor: Colors.transparent,
-            ),
-          ),
+          theme: _buildLightTheme(),
+          darkTheme: _buildDarkTheme(),
+          themeMode: darkMode ? ThemeMode.dark : ThemeMode.light,
           locale: locale,
           supportedLocales: const [Locale('en'), Locale('es')],
           localizationsDelegates: [
@@ -110,6 +369,8 @@ class AdminProcessApp extends StatelessWidget {
           ],
           home: const HomeTree(),
         );
+      },
+    );
       },
     );
   }
@@ -314,54 +575,10 @@ class _HomeTreeState extends State<HomeTree> {
         title: Text(AppLocalizations.of(context)?.get('processTitle') ??
             'Procesos Administrativos'),
         actions: [
-          DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
-              value: appLocale.value.languageCode,
-              icon: const Icon(Icons.language, color: Colors.white),
-              dropdownColor: const Color(0xFF0277BD), // Azul secundario
-              items: [
-                DropdownMenuItem(
-                    value: 'en',
-                    child: Text(
-                        AppLocalizations.of(context)?.get('english') ??
-                            'English',
-                        style: const TextStyle(color: Colors.white))),
-                DropdownMenuItem(
-                    value: 'es',
-                    child: Text(
-                        AppLocalizations.of(context)?.get('spanish') ??
-                            'Español',
-                        style: const TextStyle(color: Colors.white))),
-              ],
-              onChanged: (value) {
-                if (value != null) {
-                  setState(() {
-                    appLocale.value = Locale(value);
-                    // Invalidate cache when language changes
-                    _processListFuture = null;
-                    _currentLanguage = null;
-                    // Reset to first page when changing language
-                    _currentPage = 0;
-                  });
-
-                  // Navigate to first page after state update
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    if (_pageController.hasClients) {
-                      _pageController.animateToPage(
-                        0,
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.ease,
-                      );
-                    }
-                  });
-                }
-              },
-            ),
-          ),
           IconButton(
             onPressed: () => _showGoToPageDialog(context, processList),
             icon: const Icon(Icons.pages),
-            tooltip: 'Ir a página',
+            tooltip: AppLocalizations.of(context)?.get('goToPage') ?? 'Ir a página',
           ),
           IconButton(
             onPressed: () async {
@@ -406,7 +623,28 @@ class _HomeTreeState extends State<HomeTree> {
                   children: [
                     Text(
                         AppLocalizations.of(context)?.get('description') ?? ''),
-                    Text(AppLocalizations.of(context)?.get('aboutInfo') ?? ''),
+                    const SizedBox(height: 16),
+                    Linkify(
+                      onOpen: (link) async {
+                        final Uri url = Uri.parse(link.url);
+                        if (await canLaunchUrl(url)) {
+                          await launchUrl(url, mode: LaunchMode.externalApplication);
+                        }
+                      },
+                      text: AppLocalizations.of(context)?.get('aboutInfo') ?? '',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontFamily: 'Nunito',
+                        fontWeight: FontWeight.w600,
+                      ),
+                      linkStyle: TextStyle(
+                        color: Theme.of(context).colorScheme.primary,
+                        decoration: TextDecoration.underline,
+                        fontSize: 16,
+                        fontFamily: 'Nunito',
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
                   ],
                 ),
               );
@@ -419,12 +657,14 @@ class _HomeTreeState extends State<HomeTree> {
         child: Column(
           children: [
             DrawerHeader(
-              decoration: const BoxDecoration(
-                color: Color(0xFF1565C0), // Azul corporativo
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primary,
               ),
-              child: SizedBox(
-                width: double.infinity,
-                child: Text(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Título
+                  Text(
                     AppLocalizations.of(context)?.get('processTitle') ??
                         'Procesos Administrativos',
                     style: const TextStyle(
@@ -432,7 +672,66 @@ class _HomeTreeState extends State<HomeTree> {
                       color: Colors.white,
                       fontWeight: FontWeight.w600,
                       fontFamily: 'Nunito',
-                    )),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  // Botón de configuración con indicadores
+                  Row(
+                    children: [
+                      // Botón de configuración
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: IconButton(
+                          onPressed: () => _showSettingsDialog(context),
+                          icon: const Icon(Icons.settings, size: 20, color: Colors.white),
+                          tooltip: AppLocalizations.of(context)?.get('settings') ?? 'Configuración',
+                          padding: const EdgeInsets.all(8),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      // Indicadores de configuración actual
+                      ValueListenableBuilder<bool>(
+                        valueListenable: isDarkMode,
+                        builder: (context, darkMode, _) {
+                          return Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  darkMode ? Icons.dark_mode : Icons.light_mode,
+                                  size: 16,
+                                  color: Colors.white,
+                                ),
+                                const SizedBox(width: 6),
+                                ValueListenableBuilder<Locale>(
+                                  valueListenable: appLocale,
+                                  builder: (context, locale, _) {
+                                    return Text(
+                                      locale.languageCode.toUpperCase(),
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
             Expanded(
@@ -495,7 +794,7 @@ class _HomeTreeState extends State<HomeTree> {
   Widget _buildOriginalDock(
       BuildContext context, List<ProcessStudy> processList) {
     return Container(
-      color: const Color(0xFF1565C0), // Azul corporativo
+      color: Theme.of(context).colorScheme.primary, // Color dinámico del tema
       child: LayoutBuilder(
         builder: (context, constraints) {
           final maxWidth = constraints.maxWidth;
@@ -544,8 +843,8 @@ class _HomeTreeState extends State<HomeTree> {
                     ),
                     child: Text(
                       '${_currentPage + 1}/${processList.length}',
-                      style: const TextStyle(
-                          color: Color(0xFF1565C0), // Azul corporativo
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.primary,
                           fontSize: 12,
                           fontWeight: FontWeight.bold),
                     ),
@@ -631,7 +930,7 @@ class _HomeTreeState extends State<HomeTree> {
     const Color dockDotActive = Colors.white;
     const Color dockDotInactive = Color(0x80FFFFFF); // Blanco semi-transparente
     const Color dockArrow = Colors.white;
-    const Color dockBg = Color(0xFF1565C0); // Azul corporativo
+    final Color dockBg = Theme.of(context).colorScheme.primary; // Color dinámico del tema
 
     // Calcular grupo actual
     final currentGroup = _currentPage ~/ groupSize;
@@ -958,7 +1257,7 @@ class _HomeTreeState extends State<HomeTree> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Ir a página'),
+        title: Text(AppLocalizations.of(context)?.get('goToPage') ?? 'Ir a página'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -966,7 +1265,7 @@ class _HomeTreeState extends State<HomeTree> {
               controller: controller,
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
-                labelText: 'Número de página (1-${processList.length})',
+                labelText: (AppLocalizations.of(context)?.get('goToPageInstruction') ?? 'Número de página (1-{count})').replaceAll('{count}', '${processList.length}'),
                 border: const OutlineInputBorder(),
               ),
             ),
@@ -1035,6 +1334,350 @@ class _HomeTreeState extends State<HomeTree> {
               }
             },
             child: const Text('Ir'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showSettingsDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        title: Text(
+          AppLocalizations.of(context)?.get('settings') ?? 'Configuración',
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onSurface,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+            // Sección de Tema
+            Text(
+              AppLocalizations.of(context)?.get('theme') ?? 'Tema',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurface,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 8),
+            ValueListenableBuilder<bool>(
+              valueListenable: isDarkMode,
+              builder: (context, darkMode, _) {
+                return Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.surface.withOpacity(0.5),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      RadioListTile<bool>(
+                        title: Row(
+                          children: [
+                            Icon(Icons.light_mode, 
+                                color: Theme.of(context).colorScheme.onSurface),
+                            const SizedBox(width: 8),
+                            Flexible(
+                              child: Text(
+                                AppLocalizations.of(context)?.get('lightMode') ?? 'Modo Claro',
+                                style: TextStyle(
+                                    color: Theme.of(context).colorScheme.onSurface),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                        value: false,
+                        groupValue: darkMode,
+                        onChanged: (value) {
+                          if (value != null) {
+                            isDarkMode.value = value;
+                            SettingsManager.saveTheme(value);
+                          }
+                        },
+                        activeColor: Theme.of(context).colorScheme.primary,
+                      ),
+                      RadioListTile<bool>(
+                        title: Row(
+                          children: [
+                            Icon(Icons.dark_mode,
+                                color: Theme.of(context).colorScheme.onSurface),
+                            const SizedBox(width: 8),
+                            Flexible(
+                              child: Text(
+                                AppLocalizations.of(context)?.get('darkMode') ?? 'Modo Oscuro',
+                                style: TextStyle(
+                                    color: Theme.of(context).colorScheme.onSurface),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                        value: true,
+                        groupValue: darkMode,
+                        onChanged: (value) {
+                          if (value != null) {
+                            isDarkMode.value = value;
+                            SettingsManager.saveTheme(value);
+                          }
+                        },
+                        activeColor: Theme.of(context).colorScheme.primary,
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+            
+            const SizedBox(height: 24),
+            
+            // Sección de Idioma
+            Text(
+              (AppLocalizations.of(context)?.get('language') ?? 'Idioma:').replaceAll(':', ''),
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurface,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Container(
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surface.withOpacity(0.5),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+                ),
+              ),
+              child: Column(
+                children: [
+                  RadioListTile<String>(
+                    title: Row(
+                      children: [
+                        const Text('🇺🇸', style: TextStyle(fontSize: 20)),
+                        const SizedBox(width: 8),
+                        Flexible(
+                          child: Text(
+                            AppLocalizations.of(context)?.get('english') ?? 'English',
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.onSurface),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                    value: 'en',
+                    groupValue: appLocale.value.languageCode,
+                    onChanged: (value) {
+                      if (value != null) {
+                        setState(() {
+                          appLocale.value = Locale(value);
+                          _processListFuture = null;
+                          _currentLanguage = null;
+                          _currentPage = 0;
+                        });
+                        SettingsManager.saveLocale(value);
+                        
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          if (_pageController.hasClients) {
+                            _pageController.animateToPage(
+                              0,
+                              duration: const Duration(milliseconds: 300),
+                              curve: Curves.ease,
+                            );
+                          }
+                        });
+                      }
+                    },
+                    activeColor: Theme.of(context).colorScheme.primary,
+                  ),
+                  RadioListTile<String>(
+                    title: Row(
+                      children: [
+                        const Text('🇪🇸', style: TextStyle(fontSize: 20)),
+                        const SizedBox(width: 8),
+                        Flexible(
+                          child: Text(
+                            AppLocalizations.of(context)?.get('spanish') ?? 'Español',
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.onSurface),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                    value: 'es',
+                    groupValue: appLocale.value.languageCode,
+                    onChanged: (value) {
+                      if (value != null) {
+                        setState(() {
+                          appLocale.value = Locale(value);
+                          _processListFuture = null;
+                          _currentLanguage = null;
+                          _currentPage = 0;
+                        });
+                        SettingsManager.saveLocale(value);
+                        
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          if (_pageController.hasClients) {
+                            _pageController.animateToPage(
+                              0,
+                              duration: const Duration(milliseconds: 300),
+                              curve: Curves.ease,
+                            );
+                          }
+                        });
+                      }
+                    },
+                    activeColor: Theme.of(context).colorScheme.primary,
+                  ),
+                ],
+              ),
+            ),
+            
+            const SizedBox(height: 24),
+            
+            // Sección de Gestión de Datos
+            Text(
+              AppLocalizations.of(context)?.get('dataManagement') ?? 'Gestión de Datos',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurface,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Container(
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surface.withOpacity(0.5),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+                ),
+              ),
+              child: Column(
+                children: [
+                  ListTile(
+                    leading: const Icon(Icons.download),
+                    title: Text(
+                      AppLocalizations.of(context)?.get('exportData') ?? 'Exportar Datos',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurface,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    subtitle: Text(
+                      AppLocalizations.of(context)?.get('exportDescription') ?? 'Exportar registros eliminables a un archivo',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                        fontSize: 12,
+                      ),
+                    ),
+                    onTap: () async {
+                      try {
+                        final success = await SettingsManager.exportData();
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                success 
+                                  ? (AppLocalizations.of(context)?.get('exportSuccess') ?? 'Datos exportados exitosamente')
+                                  : (AppLocalizations.of(context)?.get('exportError') ?? 'Error al exportar datos'),
+                              ),
+                              backgroundColor: success 
+                                ? Colors.green 
+                                : Colors.red,
+                            ),
+                          );
+                        }
+                      } catch (e) {
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(AppLocalizations.of(context)?.get('exportError') ?? 'Error al exportar datos'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        }
+                      }
+                    },
+                  ),
+                  const Divider(height: 1),
+                  ListTile(
+                    leading: const Icon(Icons.upload),
+                    title: Text(
+                      AppLocalizations.of(context)?.get('importData') ?? 'Importar Datos',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurface,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    subtitle: Text(
+                      AppLocalizations.of(context)?.get('importDescription') ?? 'Importar datos desde un archivo',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                        fontSize: 12,
+                      ),
+                    ),
+                    onTap: () async {
+                      try {
+                        final success = await SettingsManager.importData();
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                success 
+                                  ? (AppLocalizations.of(context)?.get('importSuccess') ?? 'Datos importados exitosamente')
+                                  : (AppLocalizations.of(context)?.get('importError') ?? 'Error al importar datos'),
+                              ),
+                              backgroundColor: success 
+                                ? Colors.green 
+                                : Colors.red,
+                            ),
+                          );
+                          if (success) {
+                            // Reload process data and close dialog
+                            setState(() {
+                              _processListFuture = null;
+                              _currentLanguage = null;
+                            });
+                            Navigator.pop(context);
+                          }
+                        }
+                      } catch (e) {
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(AppLocalizations.of(context)?.get('importError') ?? 'Error al importar datos'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        }
+                      }
+                    },
+                  ),
+                ],
+              ),
+            ),
+              ],
+            ),
+          ),
+        ),
+        actions: [
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(AppLocalizations.of(context)?.get('close') ?? 'Cerrar'),
           ),
         ],
       ),

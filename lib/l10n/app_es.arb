@@ -1,6 +1,6 @@
 {
   "appTitle": "Procesos Administrativos",
-  "aboutInfo": "Para más información visita: Javier Galicia: jgalicia.com",
+  "aboutInfo": "Código Abierto: https://github.com/javert-galicia/admin_processes, Javier Galicia: jgalicia.com",
   "addProcess": "Agregar proceso",
   "close": "Cerrar",
   "language": "Idioma:",
@@ -30,5 +30,24 @@
   "delete_process_confirmation": "¿Estás seguro de que deseas eliminar este proceso? Esta acción no se puede deshacer.",
   "cancel": "Cancelar",
   "process_deleted_successfully": "Proceso eliminado exitosamente",
-  "error_deleting_process": "Error al eliminar el proceso"
+  "error_deleting_process": "Error al eliminar el proceso",
+  "settings": "Configuración",
+  "theme": "Tema",
+  "lightMode": "Modo Claro",
+  "darkMode": "Modo Oscuro",
+  "goToPage": "Ir a página",
+  "pageNumber": "Número de página",
+  "goToPageInstruction": "Ingresa el número de página (1-{count})",
+  "dataManagement": "Gestión de Datos",
+  "exportData": "Exportar Datos",
+  "importData": "Importar Datos",
+  "exportDescription": "Exportar procesos creados por el usuario a un archivo",
+  "importDescription": "Importar procesos creados por el usuario desde un archivo",
+  "exportSuccess": "Datos exportados exitosamente",
+  "importSuccess": "Datos importados exitosamente",
+  "exportError": "Error al exportar datos",
+  "importError": "Error al importar datos",
+  "noDataToExport": "No hay datos para exportar",
+  "selectExportLocation": "Seleccionar ubicación de exportación",
+  "selectImportFile": "Seleccionar archivo para importar"
 }

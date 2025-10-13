@@ -224,7 +224,7 @@ class _AddProcessScreenState extends State<AddProcessScreen> {
                       return Container(
                         margin: const EdgeInsets.only(bottom: 16),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: Theme.of(context).colorScheme.surface,
                           borderRadius: BorderRadius.circular(12),
                           border: Border(
                             left: BorderSide(
@@ -234,7 +234,9 @@ class _AddProcessScreenState extends State<AddProcessScreen> {
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.grey.withOpacity(0.2),
+                              color: Theme.of(context).brightness == Brightness.dark 
+                                  ? Colors.black.withOpacity(0.3)
+                                  : Colors.grey.withOpacity(0.2),
                               spreadRadius: 1,
                               blurRadius: 3,
                               offset: const Offset(0, 2),

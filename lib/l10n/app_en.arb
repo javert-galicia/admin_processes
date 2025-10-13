@@ -1,6 +1,6 @@
 {
   "appTitle": "Administrative Processes",
-  "aboutInfo": "For more information visit: Javier Galicia: jgalicia.com",
+  "aboutInfo": "Open Source: https://github.com/javert-galicia/admin_processes, Javier Galicia: jgalicia.com",
   "addProcess": "Add process",
   "close": "Close",
   "language": "Language:",
@@ -30,5 +30,24 @@
   "delete_process_confirmation": "Are you sure you want to delete this process? This action cannot be undone.",
   "cancel": "Cancel",
   "process_deleted_successfully": "Process deleted successfully",
-  "error_deleting_process": "Error deleting process"
+  "error_deleting_process": "Error deleting process",
+  "settings": "Settings",
+  "theme": "Theme",
+  "lightMode": "Light Mode",
+  "darkMode": "Dark Mode",
+  "goToPage": "Go to Page",
+  "pageNumber": "Page number",
+  "goToPageInstruction": "Enter page number (1-{count})",
+  "dataManagement": "Data Management",
+  "exportData": "Export Data",
+  "importData": "Import Data",
+  "exportDescription": "Export user-created processes to a file",
+  "importDescription": "Import user-created processes from a file",
+  "exportSuccess": "Data exported successfully",
+  "importSuccess": "Data imported successfully",
+  "exportError": "Error exporting data",
+  "importError": "Error importing data",
+  "noDataToExport": "No data to export",
+  "selectExportLocation": "Select export location",
+  "selectImportFile": "Select file to import"
 }

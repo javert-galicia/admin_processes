@@ -67,10 +67,11 @@ class _ProcessItemsState extends State<ProcessItems>
   }
 
   /// Get background color based on page index
-  Color _getBackgroundColor(int index) {
+  Color _getBackgroundColor(int index, BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return index % 2 != 0
-        ? const Color(0xFFE3F2FD) // Azul muy claro profesional
-        : const Color(0xFFF8F9FA); // Gris claro neutro
+        ? (isDark ? Theme.of(context).colorScheme.surface.withOpacity(0.7) : const Color(0xFFE3F2FD)) // Azul muy claro profesional o superficie oscura
+        : Theme.of(context).colorScheme.surface; // Superficie del tema
   }
 
   /// Show confirmation dialog before deleting process
@@ -79,14 +80,21 @@ class _ProcessItemsState extends State<ProcessItems>
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          backgroundColor: Theme.of(context).colorScheme.surface,
           title: Text(
             AppLocalizations.of(context)?.get('confirm_delete') ??
                 'Confirm Delete',
-            style: const TextStyle(fontWeight: FontWeight.bold),
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurface,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           content: Text(
             AppLocalizations.of(context)?.get('delete_process_confirmation') ??
                 'Are you sure you want to delete this process? This action cannot be undone.',
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
           ),
           actions: [
             TextButton(
@@ -95,7 +103,9 @@ class _ProcessItemsState extends State<ProcessItems>
               },
               child: Text(
                 AppLocalizations.of(context)?.get('cancel') ?? 'Cancel',
-                style: TextStyle(color: Colors.grey.shade600),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                ),
               ),
             ),
             ElevatedButton(
@@ -161,7 +171,7 @@ class _ProcessItemsState extends State<ProcessItems>
     super.build(context); // Required for AutomaticKeepAliveClientMixin
 
     final k = widget.indexPage;
-    final backgroundColor = _getBackgroundColor(k);
+    final backgroundColor = _getBackgroundColor(k, context);
 
     final processStudy = widget.processStudy;
     String title = processStudy.title;
@@ -202,7 +212,7 @@ class _ProcessItemsState extends State<ProcessItems>
                   onPressed: () => showDialog(
                     context: context,
                     builder: (context) => Dialog(
-                      backgroundColor: Colors.white, // Fondo blanco profesional
+                      backgroundColor: Theme.of(context).colorScheme.surface,
                       child: LayoutBuilder(
                         builder: (context, constraints) {
                           // Calcular el tamaño máximo disponible
@@ -224,7 +234,8 @@ class _ProcessItemsState extends State<ProcessItems>
                                   // Título (siempre visible)
                                   Text(
                                     title,
-                                    style: const TextStyle(
+                                    style: TextStyle(
+                                      color: Theme.of(context).colorScheme.onSurface,
                                       fontSize: 24,
                                       fontFamily: 'Nunito',
                                       fontWeight: FontWeight.bold,
@@ -238,7 +249,8 @@ class _ProcessItemsState extends State<ProcessItems>
                                     child: SingleChildScrollView(
                                       child: Text(
                                         descriptionStudy,
-                                        style: const TextStyle(
+                                        style: TextStyle(
+                                          color: Theme.of(context).colorScheme.onSurface,
                                           fontSize: 16,
                                           fontFamily: 'Lato',
                                           height: 1.4, // Espaciado entre líneas
@@ -261,8 +273,8 @@ class _ProcessItemsState extends State<ProcessItems>
                                           },
                                           style: ElevatedButton.styleFrom(
                                             backgroundColor:
-                                                const Color(0xFF37474F), // Gris corporativo
-                                            foregroundColor: Colors.white,
+                                                Theme.of(context).colorScheme.secondary,
+                                            foregroundColor: Theme.of(context).colorScheme.onSecondary,
                                             padding: const EdgeInsets.symmetric(
                                                 vertical: 12),
                                           ),
@@ -319,7 +331,9 @@ class _ProcessItemsState extends State<ProcessItems>
                   child: Text(
                     title,
                     style: TextStyle(
-                      color: const Color(0xFF1565C0), // Azul corporativo para títulos
+                      color: Theme.of(context).brightness == Brightness.dark 
+                          ? Colors.white
+                          : Theme.of(context).colorScheme.primary,
                       fontSize: 30,
                       fontFamily: 'Nunito',
                       fontWeight: FontWeight.bold,
@@ -338,8 +352,8 @@ class _ProcessItemsState extends State<ProcessItems>
                       margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
                       decoration: BoxDecoration(
                         color: checkboxValue[index]
-                            ? Colors.grey.shade200
-                            : Colors.white,
+                            ? Theme.of(context).colorScheme.surface.withOpacity(0.8)
+                            : Theme.of(context).colorScheme.surface,
                         borderRadius: BorderRadius.circular(12),
                         border: Border(
                           left: BorderSide(
@@ -349,7 +363,9 @@ class _ProcessItemsState extends State<ProcessItems>
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.grey.withOpacity(0.2),
+                            color: Theme.of(context).brightness == Brightness.dark 
+                                ? Colors.black.withOpacity(0.3)
+                                : Colors.grey.withOpacity(0.2),
                             spreadRadius: 1,
                             blurRadius: 3,
                             offset: const Offset(0, 2),
@@ -372,8 +388,8 @@ class _ProcessItemsState extends State<ProcessItems>
                               Expanded(
                                 child: Text(
                                   currentListSteps[index].stage,
-                                  style: const TextStyle(
-                                    color: Colors.black,
+                                  style: TextStyle(
+                                    color: Theme.of(context).colorScheme.onSurface,
                                     fontSize: 20,
                                     fontFamily: 'Lato',
                                     fontWeight: FontWeight.w600,
@@ -384,7 +400,7 @@ class _ProcessItemsState extends State<ProcessItems>
                           ),
                           children: [
                             Card.outlined(
-                              color: const Color(0xFFF8F9FA),
+                              color: Theme.of(context).colorScheme.surface,
                               child: Container(
                                 width: double.infinity,
                                 child: Padding(
@@ -392,8 +408,8 @@ class _ProcessItemsState extends State<ProcessItems>
                                       horizontal: 10),
                                   child: Text(
                                     currentListSteps[index].description,
-                                    style: const TextStyle(
-                                      color: Colors.black,
+                                    style: TextStyle(
+                                      color: Theme.of(context).colorScheme.onSurface,
                                       fontFamily: 'Lato',
                                       fontSize: 15,
                                       fontWeight: FontWeight.bold,
@@ -404,13 +420,13 @@ class _ProcessItemsState extends State<ProcessItems>
                             ),
                           ],
                         ),
-                        onChanged: (value) {
-                          setState(() {
-                            checkboxValue[index] = value!;
-                          });
-                          saveCheckboxState(k, currentListSteps.length);
-                        },
-                      ),
+                          onChanged: (value) {
+                            setState(() {
+                              checkboxValue[index] = value!;
+                            });
+                            saveCheckboxState(k, currentListSteps.length);
+                          },
+                        ),
                     );
                   },
                 ),
