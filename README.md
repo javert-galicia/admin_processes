@@ -221,13 +221,29 @@ flutter build web
 - **Incremento del 40%** en visibilidad organizacional
 - **Disminución del 50%** en errores de proceso
 
-## Screenshots
+## 📸 Screenshots
+
+<div align="center">
 
 ### Android
-![Pantalla de Admin Processes 1](/docs/screenshots/android/admin-processes-v2-screen-1.png) ![Pantalla de Admin Processes 2](/docs/screenshots/android/admin-processes-v2-screen-2.png) ![Pantalla de Admin Processes 3](/docs/screenshots/android/admin-processes-v2-screen-3.png) ![Pantalla de Admin Processes 4](/docs/screenshots/android/admin-processes-v2-screen-4.png)
+
+<img src="/docs/screenshots/android/admin-processes-v2-screen-1.png" alt="Admin Processes Android 1" width="400"/>
+<img src="/docs/screenshots/android/admin-processes-v2-screen-2.png" alt="Admin Processes Android 2" width="400"/>
+
+<img src="/docs/screenshots/android/admin-processes-v2-screen-3.png" alt="Admin Processes Android 3" width="400"/>
+<img src="/docs/screenshots/android/admin-processes-v2-screen-4.png" alt="Admin Processes Android 4" width="400"/>
 
 ### Windows
-![Pantalla de Admin Processes 1](/docs/screenshots/windows/admin-processes-v2-screen-1.png) ![Pantalla de Admin Processes 2](/docs/screenshots/windows/admin-processes-v2-screen-2.png) ![Pantalla de Admin Processes 3](/docs/screenshots/windows/admin-processes-v2-screen-3.png) ![Pantalla de Admin Processes 4](/docs/screenshots/windows/admin-processes-v2-screen-4.png)
+
+<img src="/docs/screenshots/windows/admin-processes-v2-screen-1.png" alt="Admin Processes Windows 1" width="600"/>
+
+<img src="/docs/screenshots/windows/admin-processes-v2-screen-2.png" alt="Admin Processes Windows 2" width="600"/>
+
+<img src="/docs/screenshots/windows/admin-processes-v2-screen-3.png" alt="Admin Processes Windows 3" width="600"/>
+
+<img src="/docs/screenshots/windows/admin-processes-v2-screen-4.png" alt="Admin Processes Windows 4" width="600"/>
+
+</div>
 
 ## 🤝 Contribución
 
