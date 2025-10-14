@@ -61,7 +61,10 @@ class AppLocalizations {
       'importError': 'Error importing data',
       'noDataToExport': 'No data to export',
       'selectExportLocation': 'Select export location',
-      'selectImportFile': 'Select file to import'
+      'selectImportFile': 'Select file to import',
+      'searchProcess': 'Search Process',
+      'searchHint': 'Search by title, description or stages',
+      'noResults': 'No results found'
     },
     'es': {
       'appTitle': 'Procesos Administrativos',
@@ -115,7 +118,10 @@ class AppLocalizations {
       'importError': 'Error al importar datos',
       'noDataToExport': 'No hay datos para exportar',
       'selectExportLocation': 'Seleccionar ubicación de exportación',
-      'selectImportFile': 'Seleccionar archivo para importar'
+      'selectImportFile': 'Seleccionar archivo para importar',
+      'searchProcess': 'Buscar Proceso',
+      'searchHint': 'Buscar por título, descripción o etapas',
+      'noResults': 'No se encontraron resultados'
     },
   };
 

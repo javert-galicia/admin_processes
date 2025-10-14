@@ -49,5 +49,8 @@
   "importError": "Error al importar datos",
   "noDataToExport": "No hay datos para exportar",
   "selectExportLocation": "Seleccionar ubicación de exportación",
-  "selectImportFile": "Seleccionar archivo para importar"
+  "selectImportFile": "Seleccionar archivo para importar",
+  "searchProcess": "Buscar Proceso",
+  "searchHint": "Buscar por título, descripción o etapas",
+  "noResults": "No se encontraron resultados"
 }

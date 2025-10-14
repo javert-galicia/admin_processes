@@ -18,8 +18,6 @@ import 'package:url_launcher/url_launcher.dart';
 import 'dart:io';
 import 'dart:convert';
 
-int _currentPage = 0;
-
 final ValueNotifier<Locale> appLocale = ValueNotifier(const Locale('en'));
 final ValueNotifier<bool> isDarkMode = ValueNotifier(false);
 
@@ -426,6 +424,7 @@ class _HomeTreeState extends State<HomeTree> {
   late Future<void> _initializationFuture;
   Future<List<ProcessStudy>>? _processListFuture;
   String? _currentLanguage;
+  final ValueNotifier<int> _currentPageNotifier = ValueNotifier<int>(0);
 
   @override
   void initState() {
@@ -442,6 +441,7 @@ class _HomeTreeState extends State<HomeTree> {
   @override
   void dispose() {
     _pageController.dispose();
+    _currentPageNotifier.dispose();
     super.dispose();
   }
 
@@ -566,22 +566,6 @@ class _HomeTreeState extends State<HomeTree> {
 
             final processList = processSnapshot.data ?? [];
 
-            // Adjust current page if it's beyond the available processes
-            if (_currentPage >= processList.length && processList.isNotEmpty) {
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                setState(() {
-                  _currentPage = processList.length - 1;
-                  _pageController.jumpToPage(_currentPage);
-                });
-              });
-            } else if (processList.isEmpty) {
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                setState(() {
-                  _currentPage = 0;
-                });
-              });
-            }
-
             if (processList.isEmpty) {
               return Scaffold(
                 appBar: AppBar(
@@ -604,19 +588,28 @@ class _HomeTreeState extends State<HomeTree> {
 
   Widget _buildMainScaffold(
       BuildContext context, List<ProcessStudy> processList) {
-    // Ensure current page is within bounds
-    if (_currentPage >= processList.length) {
-      _currentPage = 0;
-    }
-    return Scaffold(
+    return ValueListenableBuilder<int>(
+      valueListenable: _currentPageNotifier,
+      builder: (context, currentPage, _) {
+        // Ensure current page is within bounds
+        if (currentPage >= processList.length && processList.isNotEmpty) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            _currentPageNotifier.value = 0;
+            if (_pageController.hasClients) {
+              _pageController.jumpToPage(0);
+            }
+          });
+        }
+        
+        return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)?.get('processTitle') ??
             'Procesos Administrativos'),
         actions: [
           IconButton(
-            onPressed: () => _showGoToPageDialog(context, processList),
-            icon: const Icon(Icons.pages),
-            tooltip: AppLocalizations.of(context)?.get('goToPage') ?? 'Ir a página',
+            onPressed: () => _showSearchDialog(context, processList),
+            icon: const Icon(Icons.search),
+            tooltip: AppLocalizations.of(context)?.get('searchProcess') ?? 'Buscar proceso',
           ),
           IconButton(
             onPressed: () async {
@@ -653,7 +646,7 @@ class _HomeTreeState extends State<HomeTree> {
                       height: 48,
                     ),
                   ),
-                  applicationVersion: '1.0.1.0',
+                  applicationVersion: '2.0.0.0',
                   applicationName:
                       AppLocalizations.of(context)?.get('processTitle') ??
                           'Procesos Administrativos',
@@ -796,12 +789,8 @@ class _HomeTreeState extends State<HomeTree> {
         physics: const PageScrollPhysics(), // Smooth page scrolling
         pageSnapping: true, // Snap to pages
         onPageChanged: (page) {
-          if (mounted) {
-            // Check if widget is still mounted
-            setState(() {
-              _currentPage = page;
-            });
-          }
+          // Solo actualizar el notifier, sin setState
+          _currentPageNotifier.value = page;
         },
         itemBuilder: (context, index) {
           return ProcessItems(
@@ -811,26 +800,28 @@ class _HomeTreeState extends State<HomeTree> {
           );
         },
       ),
-      bottomNavigationBar: _buildSmartBottomNavigation(context, processList),
+      bottomNavigationBar: _buildSmartBottomNavigation(context, processList, currentPage),
+    );
+      }
     );
   }
 
   Widget _buildSmartBottomNavigation(
-      BuildContext context, List<ProcessStudy> processList) {
+      BuildContext context, List<ProcessStudy> processList, int currentPage) {
     const int maxVisibleDots = 7; // Máximo número de puntos visibles
     const int groupSize = 10; // Agrupar cada 10 páginas
 
     // Si hay pocos elementos, usar el dock original
     if (processList.length <= maxVisibleDots) {
-      return _buildOriginalDock(context, processList);
+      return _buildOriginalDock(context, processList, currentPage);
     }
 
     // Si hay muchos elementos, usar navegación inteligente
-    return _buildSmartDock(context, processList, maxVisibleDots, groupSize);
+    return _buildSmartDock(context, processList, maxVisibleDots, groupSize, currentPage);
   }
 
   Widget _buildOriginalDock(
-      BuildContext context, List<ProcessStudy> processList) {
+      BuildContext context, List<ProcessStudy> processList, int currentPage) {
     return Container(
       color: Theme.of(context).colorScheme.primary, // Color dinámico del tema
       child: LayoutBuilder(
@@ -866,7 +857,7 @@ class _HomeTreeState extends State<HomeTree> {
                 children: [
                   IconButton(
                     icon: Icon(Icons.chevron_left, color: dockArrow, size: 18),
-                    onPressed: _currentPage > 0
+                    onPressed: currentPage > 0
                         ? () => _pageController.previousPage(
                             duration: const Duration(milliseconds: 300),
                             curve: Curves.ease)
@@ -880,7 +871,7 @@ class _HomeTreeState extends State<HomeTree> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
-                      '${_currentPage + 1}/${processList.length}',
+                      '${currentPage + 1}/${processList.length}',
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.primary,
                           fontSize: 12,
@@ -889,7 +880,7 @@ class _HomeTreeState extends State<HomeTree> {
                   ),
                   IconButton(
                     icon: Icon(Icons.chevron_right, color: dockArrow, size: 18),
-                    onPressed: _currentPage < processList.length - 1
+                    onPressed: currentPage < processList.length - 1
                         ? () => _pageController.nextPage(
                             duration: const Duration(milliseconds: 300),
                             curve: Curves.ease)
@@ -909,7 +900,7 @@ class _HomeTreeState extends State<HomeTree> {
                 children: [
                   IconButton(
                     icon: Icon(Icons.arrow_back, color: dockArrow, size: 20),
-                    onPressed: _currentPage > 0
+                    onPressed: currentPage > 0
                         ? () {
                             _pageController.previousPage(
                               duration: const Duration(milliseconds: 300),
@@ -919,7 +910,7 @@ class _HomeTreeState extends State<HomeTree> {
                         : null,
                   ),
                   ...List.generate(processList.length, (index) {
-                    final isActive = _currentPage == index;
+                    final isActive = currentPage == index;
                     return GestureDetector(
                       onTap: () {
                         _pageController.animateToPage(
@@ -945,7 +936,7 @@ class _HomeTreeState extends State<HomeTree> {
                   }),
                   IconButton(
                     icon: Icon(Icons.arrow_forward, color: dockArrow, size: 20),
-                    onPressed: _currentPage < processList.length - 1
+                    onPressed: currentPage < processList.length - 1
                         ? () {
                             _pageController.nextPage(
                               duration: const Duration(milliseconds: 300),
@@ -964,19 +955,19 @@ class _HomeTreeState extends State<HomeTree> {
   }
 
   Widget _buildSmartDock(BuildContext context, List<ProcessStudy> processList,
-      int maxVisibleDots, int groupSize) {
+      int maxVisibleDots, int groupSize, int currentPage) {
     const Color dockDotActive = Colors.white;
     const Color dockDotInactive = Color(0x80FFFFFF); // Blanco semi-transparente
     const Color dockArrow = Colors.white;
     final Color dockBg = Theme.of(context).colorScheme.primary; // Color dinámico del tema
 
     // Calcular grupo actual
-    final currentGroup = _currentPage ~/ groupSize;
+    final currentGroup = currentPage ~/ groupSize;
     final totalGroups = (processList.length / groupSize).ceil();
 
     // Determinar qué puntos mostrar (se recalculará en _buildResponsiveNavigation)
     List<int> visibleIndexes = _calculateVisibleIndexes(
-        processList.length, _currentPage, maxVisibleDots);
+        processList.length, currentPage, maxVisibleDots);
 
     return Container(
       color: dockBg,
@@ -993,7 +984,7 @@ class _HomeTreeState extends State<HomeTree> {
               borderRadius: BorderRadius.circular(12.0),
             ),
             child: Text(
-              '${_currentPage + 1} / ${processList.length}',
+              '${currentPage + 1} / ${processList.length}',
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 12,
@@ -1013,7 +1004,8 @@ class _HomeTreeState extends State<HomeTree> {
                   dockArrow,
                   dockDotActive,
                   dockDotInactive,
-                  processList.length);
+                  processList.length,
+                  currentPage);
             },
           ),
 
@@ -1021,7 +1013,7 @@ class _HomeTreeState extends State<HomeTree> {
           if (totalGroups > 5) ...[
             const SizedBox(height: 8),
             _buildGroupNavigation(totalGroups, currentGroup, dockDotActive,
-                dockDotInactive, groupSize),
+                dockDotInactive, groupSize, currentPage),
           ],
         ],
       ),
@@ -1070,7 +1062,7 @@ class _HomeTreeState extends State<HomeTree> {
   }
 
   Widget _buildGroupNavigation(int totalGroups, int currentGroup,
-      Color activeColor, Color inactiveColor, int groupSize) {
+      Color activeColor, Color inactiveColor, int groupSize, int currentPage) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -1121,6 +1113,7 @@ class _HomeTreeState extends State<HomeTree> {
     Color dockDotActive,
     Color dockDotInactive,
     int totalPages,
+    int currentPage,
   ) {
     // Calcular cuántos elementos podemos mostrar según el ancho
     const double buttonWidth = 48.0; // Ancho aproximado de IconButton
@@ -1137,12 +1130,12 @@ class _HomeTreeState extends State<HomeTree> {
 
     // Recalcular índices visibles según el espacio disponible
     final adjustedVisibleIndexes =
-        _calculateVisibleIndexes(totalPages, _currentPage, maxPageButtons);
+        _calculateVisibleIndexes(totalPages, currentPage, maxPageButtons);
 
     // Para pantallas muy pequeñas, usar navegación compacta
     if (availableWidth < 400) {
       return _buildCompactNavigation(
-          dockArrow, dockDotActive, dockDotInactive, totalPages);
+          dockArrow, dockDotActive, dockDotInactive, totalPages, currentPage);
     }
 
     // Navegación normal
@@ -1154,7 +1147,7 @@ class _HomeTreeState extends State<HomeTree> {
           // Botón primera página
           IconButton(
             icon: Icon(Icons.first_page, color: dockArrow, size: 20),
-            onPressed: _currentPage > 0
+            onPressed: currentPage > 0
                 ? () => _pageController.animateToPage(0,
                     duration: const Duration(milliseconds: 300),
                     curve: Curves.ease)
@@ -1164,7 +1157,7 @@ class _HomeTreeState extends State<HomeTree> {
           // Botón página anterior
           IconButton(
             icon: Icon(Icons.chevron_left, color: dockArrow, size: 20),
-            onPressed: _currentPage > 0
+            onPressed: currentPage > 0
                 ? () => _pageController.previousPage(
                     duration: const Duration(milliseconds: 300),
                     curve: Curves.ease)
@@ -1184,7 +1177,7 @@ class _HomeTreeState extends State<HomeTree> {
               );
             }
 
-            final isActive = _currentPage == index;
+            final isActive = currentPage == index;
             return GestureDetector(
               onTap: () {
                 _pageController.animateToPage(
@@ -1222,7 +1215,7 @@ class _HomeTreeState extends State<HomeTree> {
           // Botón página siguiente
           IconButton(
             icon: Icon(Icons.chevron_right, color: dockArrow, size: 20),
-            onPressed: _currentPage < totalPages - 1
+            onPressed: currentPage < totalPages - 1
                 ? () => _pageController.nextPage(
                     duration: const Duration(milliseconds: 300),
                     curve: Curves.ease)
@@ -1232,7 +1225,7 @@ class _HomeTreeState extends State<HomeTree> {
           // Botón última página
           IconButton(
             icon: Icon(Icons.last_page, color: dockArrow, size: 20),
-            onPressed: _currentPage < totalPages - 1
+            onPressed: currentPage < totalPages - 1
                 ? () => _pageController.animateToPage(totalPages - 1,
                     duration: const Duration(milliseconds: 300),
                     curve: Curves.ease)
@@ -1244,14 +1237,14 @@ class _HomeTreeState extends State<HomeTree> {
   }
 
   Widget _buildCompactNavigation(Color dockArrow, Color dockDotActive,
-      Color dockDotInactive, int totalPages) {
+      Color dockDotInactive, int totalPages, int currentPage) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         // Botón anterior
         IconButton(
           icon: Icon(Icons.chevron_left, color: dockArrow, size: 18),
-          onPressed: _currentPage > 0
+          onPressed: currentPage > 0
               ? () => _pageController.previousPage(
                   duration: const Duration(milliseconds: 300),
                   curve: Curves.ease)
@@ -1266,7 +1259,7 @@ class _HomeTreeState extends State<HomeTree> {
             borderRadius: BorderRadius.circular(12.0),
           ),
           child: Text(
-            '${_currentPage + 1}/${totalPages}',
+            '${currentPage + 1}/${totalPages}',
             style: const TextStyle(
               color: Colors.white,
               fontSize: 11,
@@ -1278,7 +1271,7 @@ class _HomeTreeState extends State<HomeTree> {
         // Botón siguiente
         IconButton(
           icon: Icon(Icons.chevron_right, color: dockArrow, size: 18),
-          onPressed: _currentPage < totalPages - 1
+          onPressed: currentPage < totalPages - 1
               ? () => _pageController.nextPage(
                   duration: const Duration(milliseconds: 300),
                   curve: Curves.ease)
@@ -1288,92 +1281,139 @@ class _HomeTreeState extends State<HomeTree> {
     );
   }
 
-  void _showGoToPageDialog(
+  void _showSearchDialog(
       BuildContext context, List<ProcessStudy> processList) {
     final TextEditingController controller = TextEditingController();
+    List<ProcessStudy> filteredProcesses = List.from(processList);
 
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(AppLocalizations.of(context)?.get('goToPage') ?? 'Ir a página'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: controller,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                labelText: (AppLocalizations.of(context)?.get('goToPageInstruction') ?? 'Número de página (1-{count})').replaceAll('{count}', '${processList.length}'),
-                border: const OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 16),
-            // Lista de procesos para selección rápida
-            Container(
-              height: 200,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setStateDialog) {
+          return AlertDialog(
+            title: Text(AppLocalizations.of(context)?.get('searchProcess') ?? 'Buscar proceso'),
+            contentPadding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
+            content: SizedBox(
               width: double.maxFinite,
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: ListView.builder(
-                itemCount: processList.length,
-                itemBuilder: (context, index) {
-                  final process = processList[index];
-                  final isCurrentPage = index == _currentPage;
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    controller: controller,
+                    decoration: InputDecoration(
+                      labelText: AppLocalizations.of(context)?.get('searchHint') ?? 'Buscar por título o descripción',
+                      border: const OutlineInputBorder(),
+                      prefixIcon: const Icon(Icons.search),
+                      suffixIcon: controller.text.isNotEmpty
+                          ? IconButton(
+                              icon: const Icon(Icons.clear),
+                              onPressed: () {
+                                controller.clear();
+                                setStateDialog(() {
+                                  filteredProcesses = List.from(processList);
+                                });
+                              },
+                            )
+                          : null,
+                    ),
+                  onChanged: (value) {
+                    setStateDialog(() {
+                      if (value.isEmpty) {
+                        filteredProcesses = List.from(processList);
+                      } else {
+                        final searchLower = value.toLowerCase();
+                        filteredProcesses = processList.where((process) {
+                          // Buscar en título y descripción del proceso
+                          if (process.title.toLowerCase().contains(searchLower) ||
+                              process.description.toLowerCase().contains(searchLower)) {
+                            return true;
+                          }
+                          
+                          // Buscar en los stages (nombre y descripción de cada etapa)
+                          for (var stage in process.processStage) {
+                            if (stage.stage.toLowerCase().contains(searchLower) ||
+                                stage.description.toLowerCase().contains(searchLower)) {
+                              return true;
+                            }
+                          }
+                          
+                          return false;
+                        }).toList();
+                      }
+                    });
+                  },
+                ),
+                const SizedBox(height: 16),
+                // Lista de procesos filtrados con altura flexible
+                Flexible(
+                  child: Container(
+                    width: double.maxFinite,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: filteredProcesses.isEmpty
+                        ? Center(
+                            child: Text(
+                              AppLocalizations.of(context)?.get('noResults') ?? 'No se encontraron resultados',
+                              style: const TextStyle(color: Colors.grey),
+                            ),
+                          )
+                      : ListView.builder(
+                          itemCount: filteredProcesses.length,
+                          itemBuilder: (context, index) {
+                            final process = filteredProcesses[index];
+                            final processIndex = processList.indexOf(process);
+                            final isCurrentPage = processIndex == _currentPageNotifier.value;
 
-                  return ListTile(
-                    dense: true,
-                    selected: isCurrentPage,
-                    title: Text(
-                      '${index + 1}. ${process.title}',
-                      style: TextStyle(
-                        fontWeight:
-                            isCurrentPage ? FontWeight.bold : FontWeight.normal,
-                      ),
-                    ),
-                    subtitle: Text(
-                      process.description,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(fontSize: 12),
-                    ),
-                    onTap: () {
-                      Navigator.pop(context);
-                      _pageController.animateToPage(
-                        index,
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.ease,
-                      );
-                    },
-                  );
-                },
-              ),
+                            return ListTile(
+                              dense: true,
+                              selected: isCurrentPage,
+                              leading: CircleAvatar(
+                                radius: 16,
+                                child: Text(
+                                  '${processIndex + 1}',
+                                  style: const TextStyle(fontSize: 12),
+                                ),
+                              ),
+                              title: Text(
+                                process.title,
+                                style: TextStyle(
+                                  fontWeight: isCurrentPage
+                                      ? FontWeight.bold
+                                      : FontWeight.normal,
+                                ),
+                              ),
+                              subtitle: Text(
+                                process.description,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(fontSize: 12),
+                              ),
+                              onTap: () {
+                                Navigator.pop(context);
+                                _pageController.animateToPage(
+                                  processIndex,
+                                  duration: const Duration(milliseconds: 300),
+                                  curve: Curves.ease,
+                                );
+                              },
+                            );
+                          },
+                        ),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancelar'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              final pageNum = int.tryParse(controller.text);
-              if (pageNum != null &&
-                  pageNum > 0 &&
-                  pageNum <= processList.length) {
-                Navigator.pop(context);
-                _pageController.animateToPage(
-                  pageNum - 1,
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.ease,
-                );
-              }
-            },
-            child: const Text('Ir'),
-          ),
-        ],
+            ),
+            actions: [
+              ElevatedButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text(AppLocalizations.of(context)?.get('close') ?? 'Cerrar'),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
@@ -1523,7 +1563,7 @@ class _HomeTreeState extends State<HomeTree> {
                           appLocale.value = Locale(value);
                           _processListFuture = null;
                           _currentLanguage = null;
-                          _currentPage = 0;
+                          _currentPageNotifier.value = 0;
                         });
                         SettingsManager.saveLocale(value);
                         
@@ -1563,7 +1603,7 @@ class _HomeTreeState extends State<HomeTree> {
                           appLocale.value = Locale(value);
                           _processListFuture = null;
                           _currentLanguage = null;
-                          _currentPage = 0;
+                          _currentPageNotifier.value = 0;
                         });
                         SettingsManager.saveLocale(value);
                         
