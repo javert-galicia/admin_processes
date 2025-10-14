@@ -223,7 +223,11 @@ flutter build web
 
 ## Screenshots
 
-![Pantalla de Admin Processes 1](/docs/screenshots/admin-processes-v2-screen-1.png) ![Pantalla de Admin Processes 2](/docs/screenshots/admin-processes-v2-screen-2.png) ![Pantalla de Admin Processes 3](/docs/screenshots/admin-processes-v2-screen-3.png) ![Pantalla de Admin Processes 4](/docs/screenshots/admin-processes-v2-screen-4.png)
+### Android
+![Pantalla de Admin Processes 1](/docs/screenshots/android/admin-processes-v2-screen-1.png) ![Pantalla de Admin Processes 2](/docs/screenshots/android/admin-processes-v2-screen-2.png) ![Pantalla de Admin Processes 3](/docs/screenshots/android/admin-processes-v2-screen-3.png) ![Pantalla de Admin Processes 4](/docs/screenshots/android/admin-processes-v2-screen-4.png)
+
+### Windows
+![Pantalla de Admin Processes 1](/docs/screenshots/windows/admin-processes-v2-screen-1.png) ![Pantalla de Admin Processes 2](/docs/screenshots/windows/admin-processes-v2-screen-2.png) ![Pantalla de Admin Processes 3](/docs/screenshots/windows/admin-processes-v2-screen-3.png) ![Pantalla de Admin Processes 4](/docs/screenshots/windows/admin-processes-v2-screen-4.png)
 
 ## 🤝 Contribución
 
