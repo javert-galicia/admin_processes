@@ -393,6 +393,11 @@ class _ProcessItemsState extends State<ProcessItems>
                                     fontSize: 20,
                                     fontFamily: 'Lato',
                                     fontWeight: FontWeight.w600,
+                                    decoration: checkboxValue[index] 
+                                        ? TextDecoration.lineThrough 
+                                        : TextDecoration.none,
+                                    decorationColor: Theme.of(context).colorScheme.onSurface,
+                                    decorationThickness: 2.0,
                                   ),
                                 ),
                               ),

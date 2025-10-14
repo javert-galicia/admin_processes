@@ -12,6 +12,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:io';
@@ -91,22 +92,59 @@ class SettingsManager {
         'processes': allProcesses,
       };
       
-      // Get export location from user
-      String? outputFile = await FilePicker.platform.saveFile(
-        dialogTitle: 'Select export location',
-        fileName: 'user_processes_${DateTime.now().millisecondsSinceEpoch}.json',
-        type: FileType.custom,
-        allowedExtensions: ['json'],
-      );
-      
+      // Try to get export location from user. On some Android setups the save dialog may not be available.
+      String? outputFile;
+      try {
+        outputFile = await FilePicker.platform.saveFile(
+          dialogTitle: 'Select export location',
+          fileName: 'user_processes_${DateTime.now().millisecondsSinceEpoch}.json',
+          type: FileType.custom,
+          allowedExtensions: ['json'],
+        );
+      } catch (e) {
+        // FilePicker may throw on some platforms; we'll fallback to app external directory and share the file
+        outputFile = null;
+      }
+
+      // If user selected a location, write file there
       if (outputFile != null) {
-        // Write data to file
         final file = File(outputFile);
         await file.writeAsString(jsonEncode(exportData));
         return true;
       }
-      return false;
+
+      // Fallback for Android / platforms without a save dialog: write to external app directory and offer share
+      try {
+        Directory? baseDir;
+        if (Platform.isAndroid) {
+          baseDir = await getExternalStorageDirectory();
+        } else {
+          baseDir = await getApplicationDocumentsDirectory();
+        }
+
+        if (baseDir == null) return false;
+
+        final fallbackPath = '${baseDir.path}${Platform.pathSeparator}user_processes_${DateTime.now().millisecondsSinceEpoch}.json';
+        final fallbackFile = File(fallbackPath);
+        await fallbackFile.writeAsString(jsonEncode(exportData));
+
+        // Use share_plus to let the user save/share the file
+        try {
+          await Share.shareXFiles([XFile(fallbackFile.path)], text: 'Exported user processes');
+        } catch (shareError) {
+          // If sharing fails, at least the file exists in the app directory
+        }
+
+        return true;
+      } catch (e) {
+        // Provide error details in debug mode
+        // ignore: avoid_print
+        print('exportData error: $e');
+        return false;
+      }
     } catch (e) {
+      // ignore: avoid_print
+      print('exportData caught exception: $e');
       return false;
     }
   }
