@@ -87,7 +87,7 @@ lib/
 - **Navegación Web**: `url_launcher` y `flutter_linkify`
 - **Compartir Datos**: `share_plus` para exportación multiplataforma
 
-## 🎯 Características Destacadas v1.0.1
+## 🎯 Características Destacadas v2.0.0
 
 ### 🔍 Sistema de Búsqueda Avanzada
 
