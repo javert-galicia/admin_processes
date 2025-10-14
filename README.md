@@ -188,7 +188,7 @@ flutter build web
 
 ## Screenshots
 
-![Pantalla de Admin Processes 1](/docs/screenshots/admin-processes-screen-1.png) ![Pantalla de Admin Processes 2](/docs/screenshots/admin-processes-screen-2.png) ![Pantalla de Admin Processes 3](/docs/screenshots/admin-processes-screen-3.png) ![Pantalla de Admin Processes 4](/docs/screenshots/admin-processes-screen-4.png)
+![Pantalla de Admin Processes 1](/docs/screenshots/admin-processes-v2-screen-1.png) ![Pantalla de Admin Processes 2](/docs/screenshots/admin-processes-v2-screen-2.png) ![Pantalla de Admin Processes 3](/docs/screenshots/admin-processes-v2-screen-3.png) ![Pantalla de Admin Processes 4](/docs/screenshots/admin-processes-v2-screen-4.png)
 
 ## 🤝 Contribución
 
