@@ -5,6 +5,25 @@
 ![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Android%20%7C%20Web-lightgrey)
 ![License](https://img.shields.io/badge/License-MIT-green)
 ![Version](https://img.shields.io/badge/Version-2.0.0-orange)
+[![Microsoft Store](https://img.shields.io/badge/Microsoft%20Store-Download-blue?logo=microsoft&logoColor=white)](https://apps.microsoft.com/detail/9MVP38G1V5X4?hl=es-mx&gl=MX&ocid=pdpshare)
+
+## 🚀 ¡Descarga Ya!
+
+<div align="center">
+
+### 📦 Disponible en Microsoft Store
+
+[![Descargar en Microsoft Store](https://get.microsoft.com/images/en-us%20dark.svg)](https://apps.microsoft.com/detail/9MVP38G1V5X4?hl=es-mx&gl=MX&ocid=pdpshare)
+
+**¡Instala Admin Processes directamente desde Microsoft Store en Windows!**
+
+✨ Instalación con un clic | 🔄 Actualizaciones automáticas | 🛡️ Seguridad garantizada
+
+[**👉 Ir a Microsoft Store**](https://apps.microsoft.com/detail/9MVP38G1V5X4?hl=es-mx&gl=MX&ocid=pdpshare)
+
+</div>
+
+---
 
 ## Descripción
 
@@ -140,13 +159,29 @@ Sistema completo de importación y exportación:
 
 ## 🚀 Instalación y Configuración
 
-### Prerrequisitos
+### 🎁 Opción 1: Microsoft Store (Recomendado para Windows)
+
+La forma más fácil de instalar Admin Processes en Windows:
+
+1. **Visita Microsoft Store**: [Descargar Admin Processes](https://apps.microsoft.com/detail/9MVP38G1V5X4?hl=es-mx&gl=MX&ocid=pdpshare)
+2. **Haz clic en "Obtener"** o "Instalar"
+3. **¡Listo!** La aplicación se instalará automáticamente
+
+**Beneficios:**
+- ✅ Instalación segura y verificada por Microsoft
+- ✅ Actualizaciones automáticas
+- ✅ Sin necesidad de configurar el entorno de desarrollo
+- ✅ Instalación con un solo clic
+
+### 🛠️ Opción 2: Compilar desde el Código Fuente
+
+#### Prerrequisitos
 
 - Flutter SDK 3.5.3 o superior
 - Dart 3.5.3 o superior
 - Android Studio / VS Code (recomendado)
 
-### Pasos de Instalación
+#### Pasos de Instalación
 
 ```bash
 # Clonar el repositorio
