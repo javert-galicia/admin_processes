@@ -1,8 +1,12 @@
 import 'package:sqflite/sqflite.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
 import 'package:admin_processes/model/process_study.dart';
 import 'package:admin_processes/model/process_stage.dart';
 import 'package:admin_processes/db/database_platform.dart';
+import 'package:admin_processes/utils/logger.dart';
 
 class DatabaseHelper {
   static final DatabaseHelper _instance = DatabaseHelper._internal();
@@ -22,10 +26,29 @@ class DatabaseHelper {
   }
 
   Future<Database> _initDatabase() async {
-    String path = join(await getDatabasesPath(), 'admin_processes.db');
+    // Get platform-specific database path
+    String dbPath;
+    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+      // For desktop platforms, use application documents directory
+      final appDocDir = await getApplicationDocumentsDirectory();
+      final dbDir = Directory(join(appDocDir.path, 'admin_processes_db'));
+      
+      // Create directory if it doesn't exist
+      if (!await dbDir.exists()) {
+        await dbDir.create(recursive: true);
+        AppLogger.info('Created database directory: ${dbDir.path}', 'DatabaseHelper');
+      }
+      
+      dbPath = join(dbDir.path, 'admin_processes.db');
+      AppLogger.info('Database path (desktop): $dbPath', 'DatabaseHelper');
+    } else {
+      // For mobile platforms, use getDatabasesPath()
+      dbPath = join(await getDatabasesPath(), 'admin_processes.db');
+      AppLogger.info('Database path (mobile): $dbPath', 'DatabaseHelper');
+    }
 
     return await openDatabase(
-      path,
+      dbPath,
       version: 3,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,

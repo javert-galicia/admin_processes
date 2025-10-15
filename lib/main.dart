@@ -646,7 +646,7 @@ class _HomeTreeState extends State<HomeTree> {
                       height: 48,
                     ),
                   ),
-                  applicationVersion: '2.0.0.0',
+                  applicationVersion: '2.0.1.0',
                   applicationName:
                       AppLocalizations.of(context)?.get('processTitle') ??
                           'Procesos Administrativos',

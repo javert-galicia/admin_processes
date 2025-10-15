@@ -57,5 +57,5 @@ msix_config:
   identity_name: JavertGalicia.adminprocesses
   publisher: CN=2E6F20B6-F5D2-4834-8474-C87CD7C313F1
   sign_msix: false
-  msix_version: 2.0.0.0
+  msix_version: 2.0.1.0
   logo_path: "assets/logo_400.png"
