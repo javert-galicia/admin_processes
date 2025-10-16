@@ -1,7 +1,7 @@
 name: admin_processes
 description: "Visualize and organize administrative processes with touch navigation and interactive lists."
 publish_to: 'none'
-version: 0.2.0
+version: 0.2.0+5
 
 environment:
   sdk: ^3.5.3
