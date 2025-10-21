@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:admin_processes/data/process_list.dart';
 import 'package:admin_processes/view/process_items.dart';
 import 'package:admin_processes/view/add_process_screen.dart';
+import 'package:admin_processes/view/faq_screen.dart';
 import 'package:admin_processes/l10n/localization.dart';
 import 'package:admin_processes/db/process_data_service.dart';
 import 'package:admin_processes/db/database_platform.dart';
@@ -20,10 +21,12 @@ import 'dart:convert';
 
 final ValueNotifier<Locale> appLocale = ValueNotifier(const Locale('en'));
 final ValueNotifier<bool> isDarkMode = ValueNotifier(false);
+final ValueNotifier<String> flagStyle = ValueNotifier('flags');
 
 class SettingsManager {
   static const String _localeKey = 'app_locale';
   static const String _themeKey = 'dark_mode';
+  static const String _flagStyleKey = 'flag_style';
 
   static Future<void> saveLocale(String languageCode) async {
     final prefs = await SharedPreferences.getInstance();
@@ -35,6 +38,11 @@ class SettingsManager {
     await prefs.setBool(_themeKey, isDark);
   }
 
+  static Future<void> saveFlagStyle(String style) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_flagStyleKey, style);
+  }
+
   static Future<String> loadLocale() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString(_localeKey) ?? 'en';
@@ -43,6 +51,11 @@ class SettingsManager {
   static Future<bool> loadTheme() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getBool(_themeKey) ?? false;
+  }
+
+  static Future<String> loadFlagStyle() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_flagStyleKey) ?? 'flags';
   }
 
   static Future<bool> exportData() async {
@@ -225,6 +238,10 @@ Future<void> _loadSettings() async {
   // Load saved theme
   final savedTheme = await SettingsManager.loadTheme();
   isDarkMode.value = savedTheme;
+
+  // Load saved flag style
+  final savedFlagStyle = await SettingsManager.loadFlagStyle();
+  flagStyle.value = savedFlagStyle;
 }
 
 class AdminProcessApp extends StatelessWidget {
@@ -765,6 +782,30 @@ class _HomeTreeState extends State<HomeTree> {
                 ],
               ),
             ),
+            // Botón FAQ
+            ListTile(
+              leading: Icon(
+                Icons.help_outline,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              title: Text(
+                AppLocalizations.of(context)?.get('faq') ?? 'FAQ',
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const FAQScreen(),
+                  ),
+                );
+              },
+            ),
+            const Divider(),
+            // Lista de procesos
             Expanded(
               child: ListView.builder(
                 itemCount: processList.length,
@@ -1622,6 +1663,193 @@ class _HomeTreeState extends State<HomeTree> {
                   ),
                 ],
               ),
+            ),
+            
+            const SizedBox(height: 24),
+
+            // Nueva Sección de Estilo de Viñetas
+            Text(
+              AppLocalizations.of(context)?.get('chooseIcon') ?? 'Elige viñeta:',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurface,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 8),
+            ValueListenableBuilder<String>(
+              valueListenable: flagStyle,
+              builder: (context, currentFlagStyle, _) {
+                return Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.surface.withOpacity(0.5),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      RadioListTile<String>(
+                        title: Row(
+                          children: [
+                            const Icon(Icons.flag_rounded, size: 20),
+                            const SizedBox(width: 8),
+                            Flexible(
+                              child: Text(
+                                AppLocalizations.of(context)?.get('flagStyle') ?? 'Banderas',
+                                style: TextStyle(
+                                    color: Theme.of(context).colorScheme.onSurface),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                        value: 'flags',
+                        groupValue: currentFlagStyle,
+                        onChanged: (value) {
+                          if (value != null) {
+                            flagStyle.value = value;
+                            SettingsManager.saveFlagStyle(value);
+                          }
+                        },
+                        activeColor: Theme.of(context).colorScheme.primary,
+                      ),
+                      RadioListTile<String>(
+                        title: Row(
+                          children: [
+                            Container(
+                              width: 20,
+                              height: 20,
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).colorScheme.primary,
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Center(
+                                child: Text(
+                                  '1',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Flexible(
+                              child: Text(
+                                AppLocalizations.of(context)?.get('numberStyle') ?? 'Números',
+                                style: TextStyle(
+                                    color: Theme.of(context).colorScheme.onSurface),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                        value: 'numbers',
+                        groupValue: currentFlagStyle,
+                        onChanged: (value) {
+                          if (value != null) {
+                            flagStyle.value = value;
+                            SettingsManager.saveFlagStyle(value);
+                          }
+                        },
+                        activeColor: Theme.of(context).colorScheme.primary,
+                      ),
+                      RadioListTile<String>(
+                        title: Row(
+                          children: [
+                            Icon(Icons.circle, size: 20, color: Theme.of(context).colorScheme.primary),
+                            const SizedBox(width: 8),
+                            Flexible(
+                              child: Text(
+                                AppLocalizations.of(context)?.get('dotStyle') ?? 'Puntos',
+                                style: TextStyle(
+                                    color: Theme.of(context).colorScheme.onSurface),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                        value: 'dots',
+                        groupValue: currentFlagStyle,
+                        onChanged: (value) {
+                          if (value != null) {
+                            flagStyle.value = value;
+                            SettingsManager.saveFlagStyle(value);
+                          }
+                        },
+                        activeColor: Theme.of(context).colorScheme.primary,
+                      ),
+                      RadioListTile<String>(
+                        title: Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).colorScheme.primary,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: const Text(
+                                'S1',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Flexible(
+                              child: Text(
+                                AppLocalizations.of(context)?.get('codeStyle') ?? 'Códigos',
+                                style: TextStyle(
+                                    color: Theme.of(context).colorScheme.onSurface),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                        value: 'codes',
+                        groupValue: currentFlagStyle,
+                        onChanged: (value) {
+                          if (value != null) {
+                            flagStyle.value = value;
+                            SettingsManager.saveFlagStyle(value);
+                          }
+                        },
+                        activeColor: Theme.of(context).colorScheme.primary,
+                      ),
+                      RadioListTile<String>(
+                        title: Row(
+                          children: [
+                            Icon(Icons.star, size: 20, color: Theme.of(context).colorScheme.primary),
+                            const SizedBox(width: 8),
+                            Flexible(
+                              child: Text(
+                                AppLocalizations.of(context)?.get('starStyle') ?? 'Estrellas',
+                                style: TextStyle(
+                                    color: Theme.of(context).colorScheme.onSurface),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                        value: 'stars',
+                        groupValue: currentFlagStyle,
+                        onChanged: (value) {
+                          if (value != null) {
+                            flagStyle.value = value;
+                            SettingsManager.saveFlagStyle(value);
+                          }
+                        },
+                        activeColor: Theme.of(context).colorScheme.primary,
+                      ),
+                    ],
+                  ),
+                );
+              },
             ),
             
             const SizedBox(height: 24),

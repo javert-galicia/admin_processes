@@ -195,7 +195,7 @@ class _AddProcessScreenState extends State<AddProcessScreen> {
                       ),
                       IconButton(
                         onPressed: _addStage,
-                        icon: const Icon(Icons.add_circle),
+                        icon: const Icon(Icons.add_circle, size: 32), // Icono más grande
                         color: const Color(0xFF38A169), // Verde primario
                         tooltip:
                             AppLocalizations.of(context)?.get('addStage') ??

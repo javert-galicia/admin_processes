@@ -1,0 +1,27 @@
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+## [Unreleased] - 2025-01-20
+
+### Added
+- 📱 **FAQ Page**: Complete FAQ screen with 10 common questions and answers
+- 🌐 **FAQ Translations**: Full English and Spanish localization for FAQ content
+- 🎯 **FAQ Access**: New FAQ button in drawer menu with help icon
+- 📐 **Window Size**: Default app window size set to 600x950px for better mobile experience
+- ➕ **Larger Add Icon**: Increased "Add Stage" button size from 24px to 32px in process creation
+
+### Enhanced
+- 🔵 **Improved Dots**: Changed dots indicator to always show filled circles (solid colored)
+- ⭐ **Improved Stars**: Changed stars indicator to always show filled stars (solid colored)  
+- 🎯 **Better Numbers**: Improved number centering in circular indicators with better text alignment
+- 📏 **Number Container**: Increased number indicator size from 24x24 to 26x26 pixels
+
+### Fixed
+- 🐛 **Text Corruption**: Reviewed and verified no corrupted text remains in codebase
+
+### Technical
+- 🏗️ **Architecture**: Added FAQScreen widget with ExpansionTile components
+- 🔧 **Localization**: Extended ARB files with 23 new translation keys
+- 📱 **UI Components**: Enhanced process indicators with better visual styling
+- 🎨 **Visual Polish**: Improved stage indicator consistency across all styles

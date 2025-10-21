@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:admin_processes/l10n/localization.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:admin_processes/db/process_data_service.dart';
+import 'package:admin_processes/main.dart';
 
 class ProcessItems extends StatefulWidget {
   const ProcessItems(
@@ -25,6 +26,11 @@ class _ProcessItemsState extends State<ProcessItems>
   @override
   bool get wantKeepAlive => true; // Keep page alive to prevent rebuilds
 
+  @override
+  void initState() {
+    super.initState();
+  }
+
   List<Color> colors = [
     const Color(0xFFE53E3E), // Rojo primario vibrante
     const Color(0xFF3182CE), // Azul primario
@@ -42,6 +48,73 @@ class _ProcessItemsState extends State<ProcessItems>
 
   List<bool> checkboxValue = [];
   bool isLoading = true;
+  
+  // Método para obtener el indicador de stage según el estilo seleccionado
+  Widget _getStageIndicator(int index, String style, Color color) {
+    switch (style) {
+      case 'flags':
+        return Icon(
+          Icons.flag_rounded,
+          color: color,
+          size: 24,
+        );
+      case 'numbers':
+        return Container(
+          width: 26,
+          height: 26,
+          decoration: BoxDecoration(
+            color: color,
+            shape: BoxShape.circle,
+          ),
+          child: Center(
+            child: Text(
+              '${index + 1}',
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                height: 1.0, // Ajusta la altura de línea para centrar mejor
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        );
+      case 'dots':
+        return Icon(
+          Icons.circle, // Siempre círculo completo y colorido
+          color: color,
+          size: 24,
+        );
+      case 'codes':
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(4),
+          ),
+          child: Text(
+            'S${index + 1}',
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        );
+      case 'stars':
+        return Icon(
+          Icons.star, // Siempre estrella completa y colorida
+          color: color,
+          size: 24,
+        );
+      default:
+        return Icon(
+          Icons.flag_rounded,
+          color: color,
+          size: 24,
+        );
+    }
+  }
 
   Future<void> loadCheckboxState(int processIndex, int stepsCount) async {
     final prefs = await SharedPreferences.getInstance();
@@ -343,11 +416,15 @@ class _ProcessItemsState extends State<ProcessItems>
                 const SizedBox(
                   height: 20,
                 ),
-                ListView.builder(
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: currentListSteps.length,
-                  itemBuilder: (context, index) {
+                // Envolver ListView.builder con ValueListenableBuilder para reaccionar a cambios de flagStyle
+                ValueListenableBuilder<String>(
+                  valueListenable: flagStyle,
+                  builder: (context, currentFlagStyle, _) {
+                    return ListView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: currentListSteps.length,
+                      itemBuilder: (context, index) {
                     return Container(
                       margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
                       decoration: BoxDecoration(
@@ -379,11 +456,8 @@ class _ProcessItemsState extends State<ProcessItems>
                           controlAffinity: ListTileControlAffinity.leading,
                           title: Row(
                             children: [
-                              Icon(
-                                Icons.flag_rounded,
-                                color: backColorStage(index),
-                                size: 24,
-                              ),
+                              // Usar el nuevo método _getStageIndicator
+                              _getStageIndicator(index, currentFlagStyle, backColorStage(index)),
                               const SizedBox(width: 12),
                               Expanded(
                                 child: Text(
@@ -432,9 +506,11 @@ class _ProcessItemsState extends State<ProcessItems>
                             saveCheckboxState(k, currentListSteps.length);
                           },
                         ),
-                    );
-                  },
-                ),
+                      );
+                    },
+                  );
+                },
+              ),
                 const SizedBox(
                   height: 40,
                 ),
