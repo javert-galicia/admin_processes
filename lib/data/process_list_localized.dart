@@ -165,12 +165,12 @@ final Map<String, List<ProcessStudy>> processListLocalized = {
         'SMART',
         'es una metodología utilizada para definir objetivos claros y alcanzables. Cada letra representa un criterio para evaluar los objetivos.',
         [
-          ProcessStage('Specific', 'Claro y preciso.'),
+          ProcessStage('Específico', 'Claro y preciso.'),
           ProcessStage(
-              'Measurable', 'Cuantificable para rastrear el progreso.'),
-          ProcessStage('Achievable', 'Realista y alcanzable.'),
-          ProcessStage('Relevant', 'Importante para tus necesidades.'),
-          ProcessStage('Time-bound',
+              'Medible', 'Cuantificable para rastrear el progreso.'),
+          ProcessStage('Alcanzable', 'Realista y alcanzable.'),
+          ProcessStage('Relevante', 'Importante para tus necesidades.'),
+          ProcessStage('Limitado en el tiempo',
               'Limitado en el tiempo con una fecha límite clara.'),
         ],
         isDeletable: false),
