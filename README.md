@@ -6,12 +6,15 @@
 ![License](https://img.shields.io/badge/License-MIT-green)
 ![Version](https://img.shields.io/badge/Version-2.0.0-orange)
 [![Microsoft Store](https://img.shields.io/badge/Microsoft%20Store-Download-blue?logo=microsoft&logoColor=white)](https://apps.microsoft.com/detail/9MVP38G1V5X4?hl=es-mx&gl=MX&ocid=pdpshare)
+[![Google Play Store](https://img.shields.io/badge/Google%20Play-Download-green?logo=google-play&logoColor=white)](https://play.google.com/store/apps/details?id=com.jgalicia.procesos_administrativos)
 
 ## 🚀 ¡Descarga Ya!
 
 <div align="center">
 
-### 📦 Disponible en Microsoft Store
+### 📦 Disponible en Microsoft Store y Google Play
+
+#### 🪟 Microsoft Store (Windows)
 
 [![Descargar en Microsoft Store](https://get.microsoft.com/images/en-us%20dark.svg)](https://apps.microsoft.com/detail/9MVP38G1V5X4?hl=es-mx&gl=MX&ocid=pdpshare)
 
@@ -20,6 +23,28 @@
 ✨ Instalación con un clic | 🔄 Actualizaciones automáticas | 🛡️ Seguridad garantizada
 
 [**👉 Ir a Microsoft Store**](https://apps.microsoft.com/detail/9MVP38G1V5X4?hl=es-mx&gl=MX&ocid=pdpshare)
+
+---
+
+#### 🤖 Google Play Store (Android)
+
+[![Descargar en Google Play](https://play.google.com/intl/en_us/badges/static/images/badges/es-419_badge_web_generic.png)](https://play.google.com/store/apps/details?id=com.jgalicia.procesos_administrativos)
+
+**¡Descarga Admin Processes en tu dispositivo Android desde Google Play!**
+
+📱 Optimizado para Android | 🎯 Interfaz táctil | ⚡ Rendimiento optimizado
+
+[**👉 Ir a Google Play Store**](https://play.google.com/store/apps/details?id=com.jgalicia.procesos_administrativos)
+
+---
+
+### 🌐 Disponible en Múltiples Plataformas
+
+| Plataforma | Tienda | Estado |
+|----------|--------|--------|
+| 🪟 Windows | Microsoft Store | ✅ Disponible |
+| 🤖 Android | Google Play Store | ✅ Disponible |
+| 🌍 Web | Progressive Web App | ✅ Disponible |
 
 </div>
 
@@ -173,7 +198,22 @@ La forma más fácil de instalar Admin Processes en Windows:
 - ✅ Sin necesidad de configurar el entorno de desarrollo
 - ✅ Instalación con un solo clic
 
-### 🛠️ Opción 2: Compilar desde el Código Fuente
+### � Opción 2: Google Play Store (Recomendado para Android)
+
+Instala Admin Processes directamente en tu dispositivo Android:
+
+1. **Abre Google Play Store** en tu dispositivo Android
+2. **Busca "Admin Processes"** o visita: [Google Play Store](https://play.google.com/store/apps/details?id=com.jgalicia.procesos_administrativos)
+3. **Haz clic en "Instalar"**
+4. **¡Listo!** La aplicación se instalará automáticamente
+
+**Beneficios:**
+- ✅ Interfaz optimizada para dispositivos móviles
+- ✅ Actualizaciones automáticas
+- ✅ Sincronización en la nube de Google
+- ✅ Compatible con versiones Android 7.0 en adelante
+
+### �🛠️ Opción 3: Compilar desde el Código Fuente
 
 #### Prerrequisitos
 
