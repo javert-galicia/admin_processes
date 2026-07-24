@@ -235,8 +235,8 @@ class _AddProcessScreenState extends State<AddProcessScreen> {
                           boxShadow: [
                             BoxShadow(
                               color: Theme.of(context).brightness == Brightness.dark 
-                                  ? Colors.black.withOpacity(0.3)
-                                  : Colors.grey.withOpacity(0.2),
+                                  ? Colors.black.withValues(alpha: 0.3)
+                                  : Colors.grey.withValues(alpha: 0.2),
                               spreadRadius: 1,
                               blurRadius: 3,
                               offset: const Offset(0, 2),

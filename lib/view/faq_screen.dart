@@ -52,7 +52,7 @@ class FAQScreen extends StatelessWidget {
                       AppLocalizations.of(context)?.get('faqSubtitle') ?? 
                           'Encuentra respuestas a las preguntas más comunes sobre la aplicación.',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
                       ),
                     ),
                   ],

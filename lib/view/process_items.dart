@@ -26,10 +26,6 @@ class _ProcessItemsState extends State<ProcessItems>
   @override
   bool get wantKeepAlive => true; // Keep page alive to prevent rebuilds
 
-  @override
-  void initState() {
-    super.initState();
-  }
 
   List<Color> colors = [
     const Color(0xFFE53E3E), // Rojo primario vibrante
@@ -143,7 +139,7 @@ class _ProcessItemsState extends State<ProcessItems>
   Color _getBackgroundColor(int index, BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return index % 2 != 0
-        ? (isDark ? Theme.of(context).colorScheme.surface.withOpacity(0.7) : const Color(0xFFE3F2FD)) // Azul muy claro profesional o superficie oscura
+        ? (isDark ? Theme.of(context).colorScheme.surface.withValues(alpha: 0.7) : const Color(0xFFE3F2FD)) // Azul muy claro profesional o superficie oscura
         : Theme.of(context).colorScheme.surface; // Superficie del tema
   }
 
@@ -177,7 +173,7 @@ class _ProcessItemsState extends State<ProcessItems>
               child: Text(
                 AppLocalizations.of(context)?.get('cancel') ?? 'Cancel',
                 style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                 ),
               ),
             ),
@@ -429,7 +425,7 @@ class _ProcessItemsState extends State<ProcessItems>
                       margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
                       decoration: BoxDecoration(
                         color: checkboxValue[index]
-                            ? Theme.of(context).colorScheme.surface.withOpacity(0.8)
+                            ? Theme.of(context).colorScheme.surface.withValues(alpha: 0.8)
                             : Theme.of(context).colorScheme.surface,
                         borderRadius: BorderRadius.circular(12),
                         border: Border(
@@ -441,8 +437,8 @@ class _ProcessItemsState extends State<ProcessItems>
                         boxShadow: [
                           BoxShadow(
                             color: Theme.of(context).brightness == Brightness.dark 
-                                ? Colors.black.withOpacity(0.3)
-                                : Colors.grey.withOpacity(0.2),
+                                ? Colors.black.withValues(alpha: 0.3)
+                                : Colors.grey.withValues(alpha: 0.2),
                             spreadRadius: 1,
                             blurRadius: 3,
                             offset: const Offset(0, 2),
@@ -480,7 +476,7 @@ class _ProcessItemsState extends State<ProcessItems>
                           children: [
                             Card.outlined(
                               color: Theme.of(context).colorScheme.surface,
-                              child: Container(
+                              child: SizedBox(
                                 width: double.infinity,
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(

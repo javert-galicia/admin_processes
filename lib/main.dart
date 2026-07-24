@@ -245,7 +245,7 @@ Future<void> _loadSettings() async {
 }
 
 class AdminProcessApp extends StatelessWidget {
-  AdminProcessApp({super.key});
+  const AdminProcessApp({super.key});
 
   ThemeData _buildLightTheme() {
     return ThemeData(
@@ -663,11 +663,11 @@ class _HomeTreeState extends State<HomeTree> {
                       height: 48,
                     ),
                   ),
-                  applicationVersion: '2.0.1.0',
+                  applicationVersion: '2.0.6.0',
                   applicationName:
                       AppLocalizations.of(context)?.get('processTitle') ??
                           'Procesos Administrativos',
-                  applicationLegalese: '2025 MIT License',
+                  applicationLegalese: '2026 MIT License',
                   children: [
                     Text(
                         AppLocalizations.of(context)?.get('description') ?? ''),
@@ -729,7 +729,7 @@ class _HomeTreeState extends State<HomeTree> {
                       // Botón de configuración
                       Container(
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
+                          color: Colors.white.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: IconButton(
@@ -747,7 +747,7 @@ class _HomeTreeState extends State<HomeTree> {
                           return Container(
                             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
+                              color: Colors.white.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Row(
@@ -1021,7 +1021,7 @@ class _HomeTreeState extends State<HomeTree> {
             padding:
                 const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(12.0),
             ),
             child: Text(
@@ -1251,7 +1251,7 @@ class _HomeTreeState extends State<HomeTree> {
                 ),
               ),
             );
-          }).toList(),
+          }),
 
           // Botón página siguiente
           IconButton(
@@ -1300,7 +1300,7 @@ class _HomeTreeState extends State<HomeTree> {
             borderRadius: BorderRadius.circular(12.0),
           ),
           child: Text(
-            '${currentPage + 1}/${totalPages}',
+            '${currentPage + 1}/$totalPages',
             style: const TextStyle(
               color: Colors.white,
               fontSize: 11,
@@ -1493,10 +1493,10 @@ class _HomeTreeState extends State<HomeTree> {
               builder: (context, darkMode, _) {
                 return Container(
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surface.withOpacity(0.5),
+                    color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.5),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+                      color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
                     ),
                   ),
                   child: Column(
@@ -1573,10 +1573,10 @@ class _HomeTreeState extends State<HomeTree> {
             const SizedBox(height: 8),
             Container(
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surface.withOpacity(0.5),
+                color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.5),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+                  color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
                 ),
               ),
               child: Column(
@@ -1682,10 +1682,10 @@ class _HomeTreeState extends State<HomeTree> {
               builder: (context, currentFlagStyle, _) {
                 return Container(
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surface.withOpacity(0.5),
+                    color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.5),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+                      color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
                     ),
                   ),
                   child: Column(
@@ -1866,10 +1866,10 @@ class _HomeTreeState extends State<HomeTree> {
             const SizedBox(height: 8),
             Container(
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surface.withOpacity(0.5),
+                color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.5),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+                  color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
                 ),
               ),
               child: Column(
@@ -1886,7 +1886,7 @@ class _HomeTreeState extends State<HomeTree> {
                     subtitle: Text(
                       AppLocalizations.of(context)?.get('exportDescription') ?? 'Exportar registros eliminables a un archivo',
                       style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
                         fontSize: 12,
                       ),
                     ),
@@ -1932,7 +1932,7 @@ class _HomeTreeState extends State<HomeTree> {
                     subtitle: Text(
                       AppLocalizations.of(context)?.get('importDescription') ?? 'Importar datos desde un archivo',
                       style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
                         fontSize: 12,
                       ),
                     ),
